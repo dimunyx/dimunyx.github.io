@@ -6,6 +6,8 @@
 body {
   font-family: "Courier New", monospace;
   background: #0d1117;
+  border: 4px solid #EED49F;
+  border-radius: 16px;
   color: #c9d1d9;
   max-width: 680px;
   margin: 0 auto;
