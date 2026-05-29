@@ -1,0 +1,94 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Courier New", monospace;
+  background: #0d1117;
+  color: #c9d1d9;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  line-height: 1.7;
+}
+a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+  color: #f0f6fc;
+}
+.subtitle {
+  color: #8b949e;
+  margin-bottom: 2rem;
+}
+section {
+  margin-bottom: 2.5rem;
+}
+h2 {
+  font-size: 1.2rem;
+  color: #f0f6fc;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 0.4rem;
+  margin-bottom: 1rem;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  margin-bottom: 0.4rem;
+}
+.webring {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem 0;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  margin-bottom: 2.5rem;
+}
+.webring a {
+  font-size: 0.9rem;
+}
+.friend-card {
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+hr {
+  border: none;
+  border-top: 1px solid #30363d;
+  margin: 2rem 0;
+}
+.tag {
+  color: #8b949e;
+  font-size: 0.85rem;
+}
+@media (max-width: 500px) {
+  body {
+    padding: 1.5rem 1rem;
+  }
+  h1 {
+    font-size: 1.4rem;
+  }
+  h2 {
+    font-size: 1rem;
+  }
+  .webring {
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+  img {
+    width: 36px;
+    height: 36px;
+  }
+}
