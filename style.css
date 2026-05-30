@@ -41,6 +41,9 @@ h2 {
   padding-bottom: 0.4rem;
   margin-bottom: 1rem;
 }
+h3 {
+	text-color: #cad3f5;
+}
 ul {
   list-style: none;
   padding: 0;
@@ -96,8 +99,5 @@ hr {
     border-radius: 16px;
     width: 36px;
     height: 36px;
-  }
-  h3 {
-    text-color: #cad3f5;
   }
 }
