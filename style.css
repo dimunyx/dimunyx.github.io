@@ -112,7 +112,7 @@ section ul li a {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
+  width: 500px;
   height: 50px;
   border: 4px solid #eed49f;
   border-radius: 16px;
@@ -120,7 +120,6 @@ section ul li a {
   transition: 0.3s;
   flex-direction: column;
   gap: 0.3rem;
-  margin-top: 4px;
 }
 section ul li a:hover {
   background: #eed49f;
