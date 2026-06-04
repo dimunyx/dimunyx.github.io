@@ -42,6 +42,7 @@ section p {
 body > div h2 {
   	font-size: 1.8rem;
 	color: #cdd6f4;
+	margin-top: 2px;
 }
 
 h2 {
