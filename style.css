@@ -39,9 +39,9 @@ section p {
         color: #a6adc8;
 }
 
-h1 {
-	font-size: 2rem;
-        color: #cdd6f4;
+body > div h2 {
+  	font-size: 1.8rem;
+	color: #cdd64f;
 }
 
 h2 {
