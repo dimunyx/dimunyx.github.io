@@ -32,7 +32,7 @@ a:hover {
 section {
         padding: 12px;
         margin-bottom: 8px;
-        border: 4px solid #89b4fa;
+        border: 4px solid #209fb5;
         border-radius: 16px;
 }
 
@@ -66,7 +66,7 @@ li {
         flex-wrap: wrap;
         justify-content: center;
         padding: 1rem 0;
-        border: 4px solid #89b4fa;
+        border: 4px solid #209fb5;
         border-radius: 16px;
         margin-bottom: 0.5rem;
 }
@@ -76,7 +76,7 @@ li {
 }
 
 .friend-card {
-        border: 4px solid #89b4fa;
+        border: 4px solid #209fb5;
         border-radius: 16px;
 	padding: 1rem;
         margin-top: 0.5rem;
@@ -129,7 +129,7 @@ section ul li a {
         justify-content: center;
         width: 100%;
         height: 70px;
-        border: 4px solid #89b4fa;
+        border: 4px solid #209fb5;
         border-radius: 16px;
         text-decoration: none;
         transition: 0.3s;
@@ -139,6 +139,6 @@ section ul li a {
 }
 
 section ul li a:hover {
-        background: #89b4fa;
+        background: #209fb5;
 	color: #1e1e2e;
 }
