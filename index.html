@@ -386,22 +386,5 @@
  				</a>
  			</div>
      		</section>
-	<script>
-		const cat = document.createElement("div");
-		cat.textContent = "\uDB80\uDDC0";
-		cat.style.position = "fixed";
-		cat.style.fontSize = "1.8rem";
-		cat.style.pointerEvents = "none";
-		cat.style.zIndex = "99999";
-		cat.style.transform = "translate(-50%, -50%)";
-		document.body.appendChild(cat);
-		onmousemove = e => {
-			cat.style.left = e.clientX + "px";
-			cat.style.top = e.clientY + "px";
-		};
-		document.addEventListener("mouseover", e => {
-			cat.textContent = e.target.closest("a, button, input, section") ? "\uDB80\uDDBD" : "\uDB80\uDDC0";
-		});
-	</script>
  	</body>
  </html>
