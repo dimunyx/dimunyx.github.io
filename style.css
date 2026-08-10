@@ -6,8 +6,8 @@
 
 body {
         font-family: "Monocraft", monospace;
-	background: #212337;
-        color: #ebfafa;
+	background: #1e1e2e;
+        color: #cdd6f4;
         line-height: 1.7;
 }
 
@@ -32,7 +32,7 @@ body {
 }
 
 a {
-        color: #37F499;
+        color: #89B4FA;
         text-decoration: none;
 }
 
@@ -41,7 +41,7 @@ a:hover {
 }
 
 .subtitle {
-        color: #ebfafa;
+        color: #cdd6f4;
         margin-bottom: 2rem;
 	font-size: 1.5rem;
 }
@@ -49,7 +49,7 @@ a:hover {
 section {
         padding: 12px;
         margin-bottom: 8px;
-        border: 1px solid #37F499;
+        border: 2px solid #89B4FA;
         border-radius: 20px;
         margin-left: 0;
 }
@@ -59,17 +59,17 @@ section {
 }
 
 section p {
-        color: #ebfafa;
+        color: #cdd6f4;
 }
 
 body > div h1 {
   	font-size: 1.8rem;
-	color: #ebfafa;
+	color: #cdd6f4;
 }
 
 h2 {
         font-size: 1.2rem;
-        color: #ebfafa;
+        color: #cdd6f4;
         margin-bottom: 0.5rem;
 }
 
@@ -88,7 +88,7 @@ li {
         flex-wrap: wrap;
         justify-content: center;
         padding: 1rem 0;
-        border: 1px solid #37F499;
+        border: 2px solid #89B4FA;
         border-radius: 20px;
         margin-bottom: 0.5rem;
 }
@@ -98,7 +98,7 @@ li {
 }
 
 .friend-card {
-        border: 1px solid #37F499;
+        border: 1px solid #89B4FA;
         border-radius: 20px;
 	padding: 1rem;
         margin-top: 0.5rem;
@@ -111,7 +111,7 @@ hr {
 }
 
 .tag {
-        color: #ebfafa;
+        color: #cdd6f4;
         font-size: 0.85rem;
 }
 
@@ -156,7 +156,7 @@ section ul li a {
         justify-content: center;
         width: 100%;
         height: 70px;
-        border: 1px solid #37F499;
+        border: 1px solid #89B4FA;
         border-radius: 20px;
         text-decoration: none;
         transition: 0.3s;
@@ -166,6 +166,6 @@ section ul li a {
 }
 
 section ul li a:hover {
-        background: #37F499;
-	color: #212337;
+        background: #89B4FA;
+	color: #1e1e2e;
 }
