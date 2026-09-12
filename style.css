@@ -2,10 +2,10 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        font-family: "Maple Mono NF ExtraBold", monospace;
 }
 
 body {
-        font-family: "Monocraft", monospace;
 	background: #1e1e2e;
         color: #cdd6f4;
         line-height: 1.7;
