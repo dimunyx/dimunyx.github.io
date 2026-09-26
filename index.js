@@ -6,6 +6,14 @@ let dragFrame = 0;
 let dragPointerX = 0;
 let dragPointerY = 0;
 const resetButton = document.getElementById("reset-site");
+const exitButton = document.getElementById("exit-site");
+const helpButton = document.getElementById("help-site");
+const helpModal = document.getElementById("help-modal");
+const helpClose = helpModal.querySelector(".telegram-modal__close");
+const testWarningModal = document.getElementById("test-warning-modal");
+const testWarningClose = testWarningModal.querySelector(".telegram-modal__close");
+let helpCloseTimer;
+let testWarningCloseTimer;
 const resetIcon = resetButton.querySelector("img");
 const resetFallback = resetButton.querySelector(".reset-site__fallback");
 resetIcon.addEventListener("error", () => {
@@ -17,6 +25,122 @@ if (resetIcon.complete && resetIcon.naturalWidth === 0) {
 	resetFallback.hidden = false;
 }
 resetButton.addEventListener("click", () => window.location.reload());
+exitButton.addEventListener("click", () => {
+	window.close();
+	if (!window.closed) window.location.replace("about:blank");
+});
+
+function openHelpModal() {
+	clearTimeout(helpCloseTimer);
+	helpModal.hidden = false;
+	helpModal.setAttribute("aria-hidden", "false");
+	requestAnimationFrame(() => helpModal.classList.add("is-open"));
+	helpClose.focus();
+}
+
+function closeHelpModal() {
+	helpModal.classList.remove("is-open");
+	helpModal.setAttribute("aria-hidden", "true");
+	helpCloseTimer = setTimeout(() => {
+		helpModal.hidden = true;
+		helpButton.focus();
+	}, 650);
+}
+
+helpButton.addEventListener("click", openHelpModal);
+helpClose.addEventListener("click", closeHelpModal);
+
+const desktopContextMenu = document.getElementById("desktop-context-menu");
+const inspectMenuItem = desktopContextMenu.querySelector(".desktop-context-menu__item");
+const inspectModal = document.getElementById("inspect-modal");
+const inspectClose = inspectModal.querySelector(".telegram-modal__close");
+const inspectModalLink = document.getElementById("inspect-modal-link");
+const inspectCopyButton = document.getElementById("inspect-modal-copy");
+const inspectCopyLabel = inspectCopyButton.querySelector("span");
+let inspectCloseTimer;
+let inspectCopyTimer;
+let inspectedHref = window.location.href;
+let contextMenuReturnFocus = null;
+
+function closeDesktopContextMenu() {
+	desktopContextMenu.hidden = true;
+}
+
+document.addEventListener("contextmenu", (event) => {
+	if (!(event.target instanceof Element)) return;
+	if (event.target.closest(".layout-right > section")) {
+		closeDesktopContextMenu();
+		return;
+	}
+	if (event.target.closest("input, textarea, select, [contenteditable='true']")) return;
+	if (desktopContextMenu.contains(event.target)) return;
+	const clickedLink = event.target.closest("a[href]");
+	if (!clickedLink) return;
+	event.preventDefault();
+	contextMenuReturnFocus = document.activeElement;
+	inspectedHref = clickedLink.href;
+	desktopContextMenu.hidden = false;
+	const left = Math.min(event.clientX, window.innerWidth - desktopContextMenu.offsetWidth - 8);
+	const top = Math.min(event.clientY, window.innerHeight - desktopContextMenu.offsetHeight - 8);
+	desktopContextMenu.style.left = `${Math.max(8, left)}px`;
+	desktopContextMenu.style.top = `${Math.max(8, top)}px`;
+});
+
+document.addEventListener("pointerdown", (event) => {
+	if (!desktopContextMenu.hidden && !desktopContextMenu.contains(event.target)) {
+		closeDesktopContextMenu();
+	}
+});
+
+document.addEventListener("keydown", (event) => {
+	if (event.key === "Escape") closeDesktopContextMenu();
+});
+
+function openInspectModal() {
+	clearTimeout(inspectCloseTimer);
+	inspectModalLink.href = inspectedHref;
+	inspectModalLink.textContent = inspectedHref;
+	inspectModal.hidden = false;
+	inspectModal.setAttribute("aria-hidden", "false");
+	requestAnimationFrame(() => inspectModal.classList.add("is-open"));
+	inspectClose.focus();
+}
+
+function closeInspectModal() {
+	inspectModal.classList.remove("is-open");
+	inspectModal.setAttribute("aria-hidden", "true");
+	inspectCloseTimer = setTimeout(() => {
+		inspectModal.hidden = true;
+		if (contextMenuReturnFocus instanceof HTMLElement && contextMenuReturnFocus.isConnected) {
+			contextMenuReturnFocus.focus();
+		}
+	}, 650);
+}
+
+inspectMenuItem.addEventListener("click", () => {
+	closeDesktopContextMenu();
+	openInspectModal();
+});
+
+inspectCopyButton.addEventListener("click", async () => {
+	try {
+		await navigator.clipboard.writeText(inspectedHref);
+		inspectCopyLabel.textContent = "Copied";
+		clearTimeout(inspectCopyTimer);
+		inspectCopyTimer = setTimeout(() => {
+			inspectCopyLabel.textContent = "Copy";
+		}, 1400);
+	} catch {
+		inspectCopyLabel.textContent = "Failed";
+		clearTimeout(inspectCopyTimer);
+		inspectCopyTimer = setTimeout(() => {
+			inspectCopyLabel.textContent = "Copy";
+		}, 1400);
+	}
+});
+
+inspectClose.addEventListener("click", closeInspectModal);
+
 const telegramTrigger = document.querySelector(".telegram-trigger");
 const telegramModal = document.getElementById("telegram-modal");
 const telegramClose = telegramModal.querySelector(".telegram-modal__close");
@@ -26,9 +150,43 @@ const aboutClose = aboutModal.querySelector(".telegram-modal__close");
 const interestsTrigger = document.querySelector(".interests-trigger");
 const interestsModal = document.getElementById("interests-modal");
 const interestsClose = interestsModal.querySelector(".telegram-modal__close");
+const usingNowTrigger = document.querySelector(".using-now-trigger");
+const usingNowModal = document.getElementById("using-now-modal");
+const usingNowClose = usingNowModal.querySelector(".telegram-modal__close");
 let telegramCloseTimer;
 let aboutCloseTimer;
 let interestsCloseTimer;
+let usingNowCloseTimer;
+
+const modalScrollObserver = new MutationObserver(() => {
+	const hasOpenModal = [...document.querySelectorAll(".telegram-modal")]
+		.some((modal) => !modal.hidden);
+	document.documentElement.classList.toggle("is-modal-open", hasOpenModal);
+});
+modalScrollObserver.observe(document.body, {
+	attributes: true,
+	attributeFilter: ["hidden"],
+	subtree: true,
+});
+
+function openTestWarningModal() {
+	clearTimeout(testWarningCloseTimer);
+	testWarningModal.hidden = false;
+	testWarningModal.setAttribute("aria-hidden", "false");
+	requestAnimationFrame(() => testWarningModal.classList.add("is-open"));
+	testWarningClose.focus();
+}
+
+function closeTestWarningModal() {
+	testWarningModal.classList.remove("is-open");
+	testWarningModal.setAttribute("aria-hidden", "true");
+	testWarningCloseTimer = setTimeout(() => {
+		testWarningModal.hidden = true;
+	}, 650);
+}
+
+testWarningClose.addEventListener("click", closeTestWarningModal);
+openTestWarningModal();
 
 function openTelegramModal() {
 	clearTimeout(telegramCloseTimer);
@@ -49,9 +207,6 @@ function closeTelegramModal() {
 
 telegramTrigger.addEventListener("click", openTelegramModal);
 telegramClose.addEventListener("click", closeTelegramModal);
-telegramModal.addEventListener("click", (event) => {
-	if (event.target === telegramModal) closeTelegramModal();
-});
 
 function openAboutModal() {
 	clearTimeout(aboutCloseTimer);
@@ -72,9 +227,6 @@ function closeAboutModal() {
 
 aboutTrigger.addEventListener("click", openAboutModal);
 aboutClose.addEventListener("click", closeAboutModal);
-aboutModal.addEventListener("click", (event) => {
-	if (event.target === aboutModal) closeAboutModal();
-});
 
 function openInterestsModal() {
 	clearTimeout(interestsCloseTimer);
@@ -95,14 +247,26 @@ function closeInterestsModal() {
 
 interestsTrigger.addEventListener("click", openInterestsModal);
 interestsClose.addEventListener("click", closeInterestsModal);
-interestsModal.addEventListener("click", (event) => {
-	if (event.target === interestsModal) closeInterestsModal();
-});
-document.addEventListener("keydown", (event) => {
-	if (event.key === "Escape" && !telegramModal.hidden) closeTelegramModal();
-	if (event.key === "Escape" && !aboutModal.hidden) closeAboutModal();
-	if (event.key === "Escape" && !interestsModal.hidden) closeInterestsModal();
-});
+
+function openUsingNowModal() {
+	clearTimeout(usingNowCloseTimer);
+	usingNowModal.hidden = false;
+	usingNowModal.setAttribute("aria-hidden", "false");
+	requestAnimationFrame(() => usingNowModal.classList.add("is-open"));
+	usingNowClose.focus();
+}
+
+function closeUsingNowModal() {
+	usingNowModal.classList.remove("is-open");
+	usingNowModal.setAttribute("aria-hidden", "true");
+	usingNowCloseTimer = setTimeout(() => {
+		usingNowModal.hidden = true;
+		usingNowTrigger.focus();
+	}, 650);
+}
+
+usingNowTrigger.addEventListener("click", openUsingNowModal);
+usingNowClose.addEventListener("click", closeUsingNowModal);
 
 function animateSectionMove(move, destination, movingSection = draggedSection) {
 	if (draggedSection === movingSection) {
@@ -155,6 +319,16 @@ function moveSectionToEnd(container, section = draggedSection) {
 	animateSectionMove(() => container.append(section), container, section);
 }
 
+function moveSectionVertically(section, direction) {
+	const sibling = direction < 0 ? section.previousElementSibling : section.nextElementSibling;
+	if (!sibling || sibling.tagName !== "SECTION") return;
+	const destination = section.parentNode;
+	animateSectionMove(() => {
+		if (direction < 0) destination.insertBefore(section, sibling);
+		else destination.insertBefore(sibling, section);
+	}, destination, section);
+}
+
 function clearDropMarkers() {
 	currentDropTarget = null;
 	currentDropKind = null;
@@ -183,17 +357,16 @@ document.querySelectorAll(".layout-left > section, .layout-right > section").for
 	handle.innerHTML = '<img class="section-drag-handle__icon" src="assets/drag.png" alt="" aria-hidden="true">';
 	controls.append(handle);
 
-	["left", "right"].forEach((side) => {
+	["up", "down"].forEach((direction) => {
 		const button = document.createElement("button");
-		button.className = `section-column-button section-column-button--${side}`;
+		button.className = `section-order-button section-order-button--${direction}`;
 		button.type = "button";
-		button.setAttribute("aria-label", `Move section to ${side} column`);
-		button.title = `Move to ${side} column`;
-		button.innerHTML = `<img src="assets/${side}.png" alt="" aria-hidden="true" draggable="false">`;
-		button.addEventListener("click", () => {
-			const column = document.querySelector(side === "left" ? ".layout-left" : ".layout-right");
-			moveSectionToEnd(column, section);
-		});
+		button.setAttribute("aria-label", `Move section ${direction}`);
+		button.title = `Move ${direction}`;
+		button.innerHTML = direction === "up"
+			? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 14 5-5 5 5"/></svg>'
+			: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>';
+		button.addEventListener("click", () => moveSectionVertically(section, direction === "up" ? -1 : 1));
 		controls.append(button);
 	});
 
@@ -265,8 +438,6 @@ document.addEventListener("dragover", (event) => {
 			return;
 		}
 
-		if (!target.closest(".layout") && !target.closest(".telegram-modal")) {
-			if (setDropTarget(document.body, "body")) moveSectionToEnd(document.body);
-		}
+		clearDropMarkers();
 	});
 });

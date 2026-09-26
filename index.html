@@ -9,10 +9,22 @@
    		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 	</head>
 	<body>
+		<button id="help-site" class="help-site" type="button" aria-label="Help" title="Help">
+			<img src="assets/help.png" alt=""/>
+		</button>
 		<button id="reset-site" class="reset-site" type="button" aria-label="Reload site" title="Reload site">
 			<img src="assets/reload.png" alt=""/>
 			<svg class="reset-site__fallback" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.93 9h-2.02A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z"/></svg>
 		</button>
+		<button id="exit-site" class="help-site exit-site" type="button" aria-label="Exit" title="Exit">
+			<img src="assets/exit.png" alt=""/>
+		</button>
+		<div id="desktop-context-menu" class="desktop-context-menu" role="menu" aria-label="Desktop menu" hidden>
+			<button class="desktop-context-menu__item" type="button" role="menuitem">
+				<img src="assets/inspect.png" alt="" aria-hidden="true"/>
+				<span>Inspect</span>
+			</button>
+		</div>
 		<div class="layout">
 			<div class="layout-left">
 				<div class="site-header"> <img src="assets/logo.png" alt=""/>
@@ -20,14 +32,20 @@
 				</div>
 				<p class="subtitle">NixOS + Noctalia + Umbriel = ✨</p>
 				<section>
+					<h2>About Me</h2>
 					<button class="about-trigger" type="button" aria-haspopup="dialog">
-						<span class="about-trigger__title" role="heading" aria-level="2">About Me</span>
 						<span class="about-trigger__hint">Click to read</span>
 					</button>
 				</section>
 				<section>
+					<h2>Using now</h2>
+					<button class="about-trigger using-now-trigger" type="button" aria-haspopup="dialog">
+						<span class="about-trigger__hint">Click to reveal</span>
+					</button>
+				</section>
+				<section>
+					<h2>Interests</h2>
 					<button class="about-trigger interests-trigger" type="button" aria-haspopup="dialog">
-						<span class="about-trigger__title" role="heading" aria-level="2">Interests</span>
 						<span class="about-trigger__hint">Click to read</span>
 					</button>
 				</section>
@@ -55,16 +73,16 @@
 					<h2>Repositories</h2>
 					<ul>
 						<li>
-							<a href="https://github.com/dimunyx/dimunyx.github.io"> <i class="fab fa-github"></i>My website</a>
+							<a href="https://github.com/dimunyx/dimunyx.github.io"> <i class="fab fa-github"></i>Website</a>
 						</li>
 						<li>
-							<a href="https://github.com/dimunyx/dimfetch"> <i class="fab fa-github"></i>dimfetch</a>
+							<a href="https://github.com/dimunyx/dimfetch"> <i class="fab fa-github"></i>Fetch</a>
 						</li>
 						<li>
-							<a href="https://github.com/dimunyx/NixOS-dotfiles"> <i class="fab fa-github"></i>NixOS dots</a>
+							<a href="https://github.com/dimunyx/NixOS-dotfiles"> <i class="fab fa-github"></i>Nix dots</a>
 						</li>
 						<li>
-							<a href="https://github.com/dimunyx/NixOS-configuration"> <i class="fab fa-github"></i>NixOS conf</a>
+							<a href="https://github.com/dimunyx/NixOS-configuration"> <i class="fab fa-github"></i>Nix conf</a>
 						</li>
 					</ul>
 				</section>
@@ -91,8 +109,9 @@
 			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" tabindex="-1">
 				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
 				<h2 id="about-modal-title">About Me</h2>
-				<p>Linux enthusiast learning C/C++.</p>
-				<p>I got into Linux and programming in 2025 and have been exploring the open-source world ever since.</p>
+				<p>Linux enthusiast learning C++.</p>
+				<p>I have been in Linux and programming since July 2025.</p>
+				<p>I'm 14 btw and that's crazyy!</p>
 			</div>
 		</div>
 		<div id="interests-modal" class="telegram-modal" hidden aria-hidden="true">
@@ -102,6 +121,64 @@
 				<p>C++ programs.</p>
 				<p>Linux ricing.</p>
 				<p>WM's used:<br><code>MangoWM</code><br><code>Hyprland</code><br><code>Sway</code><br><code>SwayFX</code><br><code>Niri</code><br><code>BSPWM</code><br><code>DWM</code><br><code>XMonad</code><br><code>Wayfire</code><br><code>OpenBox</code><br><code>Umbriel</code></p>
+			</div>
+		</div>
+		<div id="inspect-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="inspect-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="inspect-modal-title">Inspect</h2>
+				<div class="inspect-modal__link-row">
+					<a id="inspect-modal-link" class="inspect-modal__link" target="_blank" rel="noopener noreferrer"></a>
+					<button id="inspect-modal-copy" class="inspect-modal__copy" type="button">
+						<img src="assets/copy.png" alt="" aria-hidden="true"/><span>Copy</span>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div id="help-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="help-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<span class="help-modal__version">v0.1.1</span>
+				<h2 id="help-modal-title">Help</h2>
+				<ol class="help-modal__list">
+					<li>Right click to open context menu.</li>
+					<li>Material Design 3 based site.</li>
+					<li>Made by dimunyx based on copyleft :)</li>
+					<li>Reload button on the right.</li>
+				</ol>
+			</div>
+		</div>
+		<div id="test-warning-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="test-warning-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="test-warning-modal-title">Warning</h2>
+				<p>This site is still in testing.</p>
+			</div>
+		</div>
+		<div id="using-now-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog using-now-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="using-now-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="using-now-modal-title">Using now</h2>
+				<pre class="using-now-modal__content">          ▗▄▄▄       ▗▄▄▄▄    ▄▄▄▖             ╭──────────────Hardware──────────────╮
+          ▜███▙       ▜███▙  ▟███▛             NixOS 26.11 (Zokor)
+           ▜███▙       ▜███▙▟███▛              AMD Ryzen 5 5500U (6/12)
+            ▜███▙       ▜██████▛               AMD Lucienne [Integrated]
+     ▟█████████████████▙ ▜████▛     ▟▙         4.78 GiB / 7.10 GiB (67%)
+    ▟███████████████████▙ ▜███▙    ▟██▙        44.56 GiB / 451.71 GiB (10%)
+           ▄▄▄▄▖           ▜███▙  ▟███▛        100% (AC Connected)
+          ▟███▛             ▜██▛ ▟███▛         Linux 7.2.7-cachyos
+         ▟███▛               ▜▛ ▟███▛          ╰────────────────────────────────────╯
+▟███████████▛                  ▟██████████▙    ╭──────────────Software──────────────╮
+▜██████████▛                  ▟███████████▛    umbriel (Wayland)
+      ▟███▛ ▟▙               ▟███▛             fish 4.9.3
+     ▟███▛ ▟██▙             ▟███▛              greetd
+    ▟███▛  ▜███▙           ▝▀▀▀▀               kitty 0.49.0
+    ▜██▛    ▜███▙ ▜██████████████████▛         Maple Mono NF ExtraBold (14pt)
+     ▜▛     ▟████▙ ▜████████████████▛          Papirus-Dark [GTK2/3/4]
+           ▟██████▙         ▜███▙              1432 (nix), 20 (flatpak)
+          ▟███▛▜███▙         ▜███▙             57 mins
+         ▟███▛  ▜███▙         ▜███▙            37 days / 365 days [Alive]
+         ▝▀▀▀    ▀▀▀▀▘         ▀▀▀▘            ╰────────────────────────────────────╯</pre>
 			</div>
 		</div>
 		<section id="nixwebring">
