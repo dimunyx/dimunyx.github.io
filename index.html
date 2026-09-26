@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="us">
+<html lang="en">
 	<head>
 		<meta charset="UTF-8"/>
    		<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -9,30 +9,31 @@
    		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 	</head>
 	<body>
+		<button id="reset-site" class="reset-site" type="button" aria-label="Reload site" title="Reload site">
+			<img src="assets/reload.png" alt=""/>
+			<svg class="reset-site__fallback" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.93 9h-2.02A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z"/></svg>
+		</button>
 		<div class="layout">
 			<div class="layout-left">
-				<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.25rem;"> <img src="assets/logo.png" alt="" style="width: 48px; height: 48px;"/>
+				<div class="site-header"> <img src="assets/logo.png" alt=""/>
 					<h1>dimunyx</h1>
 				</div>
 				<p class="subtitle">NixOS + Noctalia + Umbriel = ✨</p>
 				<section>
-					<h2>About me</h2>
-					<div class="grid-container">
-						<div class="grid-item">Linux enthusiast and a C/C++ developer.</div>
-						<div class="grid-item">My life isn't as sweet as it might seem to others. My parents broke up three years ago, and I live only with my dad. I got into programming and Linux not long ago (around July 2025) and after ditching Windows completely, I spend every day using Linux; it’s the only way I stay still in peace.</div>
-					</div>
+					<button class="about-trigger" type="button" aria-haspopup="dialog">
+						<span class="about-trigger__title" role="heading" aria-level="2">About Me</span>
+						<span class="about-trigger__hint">Click to read</span>
+					</button>
 				</section>
 				<section>
-					<h2>What i'm interested in</h2>
-					<div class="grid-container">
-						<div class="grid-item">➜ C++ programs.</div>
-						<div class="grid-item">➜ Linux ricing.</div>
-						<div class="grid-item">➜ WM's used: MangoWM, Hyprland, Sway, SwayFX, Niri, BSPWM, DWM, XMonad, Wayfire, OpenBox and Umbriel.</div>
-					</div>
+					<button class="about-trigger interests-trigger" type="button" aria-haspopup="dialog">
+						<span class="about-trigger__title" role="heading" aria-level="2">Interests</span>
+						<span class="about-trigger__hint">Click to read</span>
+					</button>
 				</section>
 				<section>
-					<h2>You can find me on</h2>
-					<ul>
+					<h2>Social</h2>
+					<ul class="social-links">
 						<li>
 							<a href="https://github.com/dimunyx"> <i class="fab fa-github"></i>GitHub</a>
 						</li>
@@ -44,6 +45,9 @@
 						</li>
 						<li>
 							<a href="https://www.twitch.tv/dimunyx1"> <i class="fa-brands fa-twitch"></i>Twitch</a>
+						</li>
+						<li>
+							<button class="telegram-trigger" type="button"><i class="fa-brands fa-telegram"></i>Telegram</button>
 						</li>
 					</ul>
 				</section>
@@ -67,19 +71,40 @@
 			</div>
 			<div class="layout-right">
 				<section>
+					<h2>GitHub Stats</h2>
 					<div class="github-stats">
-						<a href="https://awesome-github-stats.azurewebsites.net/index.html??cardType=level-alternate&theme=github-dark&fontFamily=Cascadia%20Code&preferLogin=false">
-							<img alt="dimunyx's GitHub Stats" src="https://awesome-github-stats.azurewebsites.net/user-stats/dimunyx?cardType=level-alternate&theme=github-dark&fontFamily=Cascadia%20Code&preferLogin=false" style="width:100%;height:auto;max-width:auto"/>
+						<a href="https://awesome-github-stats.azurewebsites.net/index.html??cardType=level&theme=material-palenight&fontFamily=Cascadia%20Code&preferLogin=false">
+							<img alt="dimunyx's GitHub Stats" src="https://awesome-github-stats.azurewebsites.net/user-stats/dimunyx?cardType=level&theme=material-palenight&fontFamily=Cascadia%20Code&preferLogin=false"/>
 						</a>
 					</div>
 				</section>
-				<section style="text-align:center">
-					<h2>Telegram</h2>
-					<img src="assets/tg.png" alt="Telegram QR code" style="display:block;width:60%;max-width:360px;height:auto;margin:0 auto"/>
-				</section>
 			</div>
 		</div>
-		<section>
+		<div id="telegram-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="telegram-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="telegram-modal-title">Telegram</h2>
+				<img src="assets/tg.png" alt="Telegram QR code"/>
+			</div>
+		</div>
+		<div id="about-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="about-modal-title">About Me</h2>
+				<p>Linux enthusiast learning C/C++.</p>
+				<p>I got into Linux and programming in 2025 and have been exploring the open-source world ever since.</p>
+			</div>
+		</div>
+		<div id="interests-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="interests-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="interests-modal-title">Interests</h2>
+				<p>C++ programs.</p>
+				<p>Linux ricing.</p>
+				<p>WM's used:<br><code>MangoWM</code><br><code>Hyprland</code><br><code>Sway</code><br><code>SwayFX</code><br><code>Niri</code><br><code>BSPWM</code><br><code>DWM</code><br><code>XMonad</code><br><code>Wayfire</code><br><code>OpenBox</code><br><code>Umbriel</code></p>
+			</div>
+		</div>
+		<section id="nixwebring">
 			<h2>Nixwebring</h2>
 			<div class="webring">
 				<a href="https://nixwebr.ing/prev/dimunyx">◀ Previous</a>
@@ -88,5 +113,6 @@
 				<a href="https://nixwebr.ing/next/dimunyx">Next ▶</a>
 			</div>
 		</section>
+		<script src="index.js" defer></script>
 	</body>
 </html>
