@@ -6,11 +6,18 @@ let dragFrame = 0;
 let dragPointerX = 0;
 let dragPointerY = 0;
 const floatingPlaceholders = new WeakMap();
+const floatingResizeHandles = new WeakMap();
 let contextMenuSection = null;
 let floatingSection = null;
 let floatingPointerId = null;
 let floatingPointerOffsetX = 0;
 let floatingPointerOffsetY = 0;
+let resizingSection = null;
+let resizePointerId = null;
+let resizeStartX = 0;
+let resizeStartY = 0;
+let resizeStartWidth = 0;
+let resizeStartHeight = 0;
 const resetButton = document.getElementById("reset-site");
 const exitButton = document.getElementById("exit-site");
 const helpButton = document.getElementById("help-site");
@@ -518,6 +525,10 @@ function makeSectionFloating(section) {
 	section.style.width = `${width}px`;
 	section.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - width - 8))}px`;
 	section.style.top = `${Math.max(8, Math.min(rect.top, window.innerHeight - 48))}px`;
+	const resizeHandle = floatingResizeHandles.get(section);
+	if (resizeHandle) {
+		resizeHandle.classList.add("is-active");
+	}
 	section.querySelector(".section-drag-handle").draggable = false;
 	if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 		section.animate([
@@ -532,6 +543,10 @@ function makeSectionFloating(section) {
 
 function makeSectionTiled(section) {
 	if (!section.classList.contains("is-floating")) return;
+	const resizeHandle = floatingResizeHandles.get(section);
+	if (resizeHandle) {
+		resizeHandle.classList.remove("is-active");
+	}
 	const placeholder = floatingPlaceholders.get(section);
 	if (placeholder?.parentNode) {
 		placeholder.parentNode.insertBefore(section, placeholder);
@@ -540,10 +555,19 @@ function makeSectionTiled(section) {
 	floatingPlaceholders.delete(section);
 	section.classList.remove("is-floating");
 	section.style.removeProperty("width");
+	section.style.removeProperty("height");
 	section.style.removeProperty("left");
 	section.style.removeProperty("top");
 	section.querySelector(".section-drag-handle").draggable = true;
 }
+
+window.addEventListener("resize", () => {
+	document.querySelectorAll("section.is-floating").forEach((section) => {
+		const rect = section.getBoundingClientRect();
+		section.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - rect.width - 8))}px`;
+		section.style.top = `${Math.max(8, Math.min(rect.top, window.innerHeight - Math.min(rect.height, window.innerHeight - 16) - 8))}px`;
+	});
+});
 
 function startFloatingSectionMove(section, handle, event) {
 	if (!section.classList.contains("is-floating") || event.button !== 0) return;
@@ -571,6 +595,38 @@ function stopFloatingSectionMove(section, event) {
 	floatingSection = null;
 	floatingPointerId = null;
 	document.body.classList.remove("is-section-moving");
+}
+
+function startFloatingSectionResize(section, handle, event) {
+	if (!section.classList.contains("is-floating") || event.button !== 0) return;
+	event.preventDefault();
+	resizingSection = section;
+	resizePointerId = event.pointerId;
+	const rect = section.getBoundingClientRect();
+	resizeStartX = event.clientX;
+	resizeStartY = event.clientY;
+	resizeStartWidth = rect.width;
+	resizeStartHeight = rect.height;
+	handle.setPointerCapture(event.pointerId);
+	document.body.classList.add("is-section-resizing");
+}
+
+function resizeFloatingSection(section, event) {
+	if (resizingSection !== section || resizePointerId !== event.pointerId) return;
+	const rect = section.getBoundingClientRect();
+	const minWidth = Math.min(240, window.innerWidth - 16);
+	const minHeight = 120;
+	const maxWidth = Math.max(minWidth, window.innerWidth - rect.left - 8);
+	const maxHeight = Math.max(minHeight, window.innerHeight - rect.top - 8);
+	section.style.width = `${Math.max(minWidth, Math.min(resizeStartWidth + event.clientX - resizeStartX, maxWidth))}px`;
+	section.style.height = `${Math.max(minHeight, Math.min(resizeStartHeight + event.clientY - resizeStartY, maxHeight))}px`;
+}
+
+function stopFloatingSectionResize(section, event) {
+	if (resizingSection !== section || resizePointerId !== event.pointerId) return;
+	resizingSection = null;
+	resizePointerId = null;
+	document.body.classList.remove("is-section-resizing");
 }
 
 function clearDropMarkers() {
@@ -620,10 +676,23 @@ document.querySelectorAll(".layout-left > section, .layout-right > section").for
 	controls.append(sectionModeStatus);
 
 	section.prepend(controls);
+	const resizeHandle = document.createElement("button");
+	resizeHandle.className = "section-resize-handle";
+	resizeHandle.type = "button";
+	resizeHandle.draggable = false;
+	resizeHandle.setAttribute("aria-label", "Resize section");
+	resizeHandle.title = "Resize section";
+	resizeHandle.innerHTML = '<img src="assets/resize.png" alt="" aria-hidden="true">';
+	floatingResizeHandles.set(section, resizeHandle);
+	section.append(resizeHandle);
 	handle.addEventListener("pointerdown", (event) => startFloatingSectionMove(section, handle, event));
 	handle.addEventListener("pointermove", (event) => moveFloatingSection(section, event));
 	handle.addEventListener("pointerup", (event) => stopFloatingSectionMove(section, event));
 	handle.addEventListener("pointercancel", (event) => stopFloatingSectionMove(section, event));
+	resizeHandle.addEventListener("pointerdown", (event) => startFloatingSectionResize(section, resizeHandle, event));
+	resizeHandle.addEventListener("pointermove", (event) => resizeFloatingSection(section, event));
+	resizeHandle.addEventListener("pointerup", (event) => stopFloatingSectionResize(section, event));
+	resizeHandle.addEventListener("pointercancel", (event) => stopFloatingSectionResize(section, event));
 
 	section.addEventListener("dragstart", (event) => {
 		if (!event.target.closest(".section-drag-handle")) {

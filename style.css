@@ -368,9 +368,27 @@ section.is-floating {
         position: fixed !important;
         z-index: 2147483644;
         margin: 0;
+        min-width: 0;
+        box-sizing: border-box;
+        max-width: calc(100vw - 16px);
+        container-type: inline-size;
         max-height: calc(100vh - 16px);
         overflow: auto;
         box-shadow: 0 12px 32px #00000066;
+}
+
+@container (max-width: 400px) {
+        section ul li,
+        section ul.social-links li {
+                flex-basis: calc(50% - 12px);
+        }
+}
+
+@container (max-width: 280px) {
+        section ul li,
+        section ul.social-links li {
+                flex-basis: 100%;
+        }
 }
 
 .floating-section-placeholder {
@@ -488,6 +506,46 @@ body.is-section-moving * {
         width: 24px;
         height: 24px;
         object-fit: contain;
+}
+
+.section-resize-handle {
+        position: absolute;
+        z-index: 2147483647;
+        right: 10px;
+        bottom: 10px;
+        display: none;
+        width: 36px;
+        height: 36px;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        cursor: nwse-resize;
+        touch-action: none;
+}
+
+.section-resize-handle.is-active {
+        display: grid;
+}
+
+.section-resize-handle img {
+        display: block;
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+        pointer-events: none;
+}
+
+.section-resize-handle:hover,
+.section-resize-handle:focus-visible {
+        background: #cba6f7;
+}
+
+body.is-section-resizing,
+body.is-section-resizing * {
+        cursor: nwse-resize !important;
+        user-select: none !important;
 }
 
 section.is-flipping {
@@ -628,6 +686,10 @@ section ul li .telegram-trigger:hover {
 
 .github-stats a {
         transition: scale 120ms cubic-bezier(.2, 0, 0, 1);
+}
+
+.github-stats a:focus-visible {
+        border-radius: var(--md-radius-small);
 }
 
 .webring {
