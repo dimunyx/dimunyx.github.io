@@ -5,13 +5,19 @@ let currentDropPosition = null;
 let dragFrame = 0;
 let dragPointerX = 0;
 let dragPointerY = 0;
+const floatingPlaceholders = new WeakMap();
+let contextMenuSection = null;
+let floatingSection = null;
+let floatingPointerId = null;
+let floatingPointerOffsetX = 0;
+let floatingPointerOffsetY = 0;
 const resetButton = document.getElementById("reset-site");
 const exitButton = document.getElementById("exit-site");
 const helpButton = document.getElementById("help-site");
 const helpModal = document.getElementById("help-modal");
 const helpClose = helpModal.querySelector(".telegram-modal__close");
 const testWarningModal = document.getElementById("test-warning-modal");
-const testWarningClose = testWarningModal.querySelector(".telegram-modal__close");
+const testWarningClose = testWarningModal.querySelector(".warning-modal__close");
 let helpCloseTimer;
 let testWarningCloseTimer;
 const resetIcon = resetButton.querySelector("img");
@@ -51,55 +57,192 @@ helpButton.addEventListener("click", openHelpModal);
 helpClose.addEventListener("click", closeHelpModal);
 
 const desktopContextMenu = document.getElementById("desktop-context-menu");
-const inspectMenuItem = desktopContextMenu.querySelector(".desktop-context-menu__item");
+const inspectMenuItem = document.getElementById("inspect-context-target");
+const openContextTarget = document.getElementById("open-context-target");
+const sectionModeMenu = document.getElementById("section-mode-menu");
+const floatSectionButton = document.getElementById("float-section");
+const tileSectionButton = document.getElementById("tile-section");
+const bodyContextMenu = document.getElementById("body-context-menu");
+const siteInfoMenuItem = document.getElementById("site-info-menu-item");
+const currentLayoutValue = document.getElementById("current-layout-value");
+const bodyOwnerLink = document.getElementById("body-owner-link");
 const inspectModal = document.getElementById("inspect-modal");
 const inspectClose = inspectModal.querySelector(".telegram-modal__close");
 const inspectModalLink = document.getElementById("inspect-modal-link");
+const inspectModalLinkRow = document.getElementById("inspect-modal-link-row");
+const inspectModalNoLink = document.getElementById("inspect-modal-no-link");
 const inspectCopyButton = document.getElementById("inspect-modal-copy");
 const inspectCopyLabel = inspectCopyButton.querySelector("span");
+const siteInfoModal = document.getElementById("site-info-modal");
+const siteInfoClose = siteInfoModal.querySelector(".telegram-modal__close");
 let inspectCloseTimer;
 let inspectCopyTimer;
+let siteInfoCloseTimer;
 let inspectedHref = window.location.href;
 let contextMenuReturnFocus = null;
+let contextMenuActionTrigger = null;
+const contextMenuCloseTimers = new WeakMap();
 
 function closeDesktopContextMenu() {
-	desktopContextMenu.hidden = true;
+	hideContextMenu(desktopContextMenu);
+}
+
+function openDesktopContextMenuAt(event, useLargeRadius = false) {
+	desktopContextMenu.classList.toggle("desktop-context-menu--large-radius", useLargeRadius);
+	positionContextMenuAt(desktopContextMenu, event);
+}
+
+function positionContextMenuAt(menu, event) {
+	clearTimeout(contextMenuCloseTimers.get(menu));
+	contextMenuCloseTimers.delete(menu);
+	menu.classList.remove("is-closing");
+	menu.hidden = false;
+	const left = Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 8);
+	const top = Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 8);
+	menu.style.left = `${Math.max(8, left)}px`;
+	menu.style.top = `${Math.max(8, top)}px`;
+}
+
+function closeSectionModeMenu() {
+	hideContextMenu(sectionModeMenu);
+	contextMenuSection = null;
+}
+
+function closeBodyContextMenu() {
+	hideContextMenu(bodyContextMenu);
+}
+
+function hideContextMenu(menu) {
+	if (menu.hidden) return;
+	if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+		menu.hidden = true;
+		menu.classList.remove("is-closing");
+		return;
+	}
+	clearTimeout(contextMenuCloseTimers.get(menu));
+	menu.classList.add("is-closing");
+	contextMenuCloseTimers.set(menu, setTimeout(() => {
+		menu.hidden = true;
+		menu.classList.remove("is-closing");
+		contextMenuCloseTimers.delete(menu);
+	}, 140));
 }
 
 document.addEventListener("contextmenu", (event) => {
-	if (!(event.target instanceof Element)) return;
+	if (!(event.target instanceof Element)) {
+		event.preventDefault();
+		return;
+	}
+	if (desktopContextMenu.contains(event.target) || sectionModeMenu.contains(event.target) || bodyContextMenu.contains(event.target)) {
+		event.preventDefault();
+		return;
+	}
+	closeDesktopContextMenu();
+	closeSectionModeMenu();
+	closeBodyContextMenu();
+	contextMenuActionTrigger = null;
+	openContextTarget.hidden = true;
+	const dragHandle = event.target.closest(".section-drag-handle");
+	if (dragHandle) {
+		event.preventDefault();
+		contextMenuSection = dragHandle.closest("section");
+		positionContextMenuAt(sectionModeMenu, event);
+		return;
+	}
+	const revealTrigger = event.target.closest(".about-trigger");
+	if (revealTrigger) {
+		event.preventDefault();
+		contextMenuActionTrigger = revealTrigger;
+		inspectedHref = null;
+		openContextTarget.hidden = false;
+		openDesktopContextMenuAt(event, true);
+		return;
+	}
+	const siteActionButton = event.target.closest("#help-site, #reset-site, #exit-site");
+	if (siteActionButton) {
+		event.preventDefault();
+		contextMenuActionTrigger = siteActionButton;
+		inspectedHref = null;
+		openContextTarget.hidden = false;
+		openDesktopContextMenuAt(event, true);
+		return;
+	}
+	const clickedLink = event.target.closest("a[href]");
 	if (event.target.closest(".layout-right > section")) {
-		closeDesktopContextMenu();
+		event.preventDefault();
 		return;
 	}
 	if (event.target.closest("input, textarea, select, [contenteditable='true']")) return;
-	if (desktopContextMenu.contains(event.target)) return;
-	const clickedLink = event.target.closest("a[href]");
-	if (!clickedLink) return;
+	if (!clickedLink) {
+		if (event.target.closest("button, [role='button']")) {
+			event.preventDefault();
+			return;
+		}
+		event.preventDefault();
+		if (event.target === document.body) openBodyContextMenuAt(event);
+		return;
+	}
 	event.preventDefault();
 	contextMenuReturnFocus = document.activeElement;
 	inspectedHref = clickedLink.href;
-	desktopContextMenu.hidden = false;
-	const left = Math.min(event.clientX, window.innerWidth - desktopContextMenu.offsetWidth - 8);
-	const top = Math.min(event.clientY, window.innerHeight - desktopContextMenu.offsetHeight - 8);
-	desktopContextMenu.style.left = `${Math.max(8, left)}px`;
-	desktopContextMenu.style.top = `${Math.max(8, top)}px`;
+	const canOpenFromMenu = clickedLink.closest(".social-links, .repository-links, .webring");
+	contextMenuActionTrigger = canOpenFromMenu ? clickedLink : null;
+	openContextTarget.hidden = !canOpenFromMenu;
+	openDesktopContextMenuAt(event, Boolean(canOpenFromMenu));
 });
 
 document.addEventListener("pointerdown", (event) => {
 	if (!desktopContextMenu.hidden && !desktopContextMenu.contains(event.target)) {
+		contextMenuActionTrigger = null;
 		closeDesktopContextMenu();
+	}
+	if (!sectionModeMenu.hidden && !sectionModeMenu.contains(event.target)) {
+		closeSectionModeMenu();
+	}
+	if (!bodyContextMenu.hidden && !bodyContextMenu.contains(event.target)) {
+		closeBodyContextMenu();
 	}
 });
 
 document.addEventListener("keydown", (event) => {
-	if (event.key === "Escape") closeDesktopContextMenu();
+	if (event.key === "Escape") {
+		closeDesktopContextMenu();
+		closeSectionModeMenu();
+		closeBodyContextMenu();
+	}
+});
+
+function updateCurrentLayoutLabel() {
+	const floatingCount = document.querySelectorAll("section.is-floating").length;
+	currentLayoutValue.textContent = floatingCount === 0
+		? "Tiling"
+		: `Tiling + ${floatingCount} floating`;
+}
+
+function openBodyContextMenuAt(event) {
+	updateCurrentLayoutLabel();
+	positionContextMenuAt(bodyContextMenu, event);
+}
+
+floatSectionButton.addEventListener("click", () => {
+	if (contextMenuSection) makeSectionFloating(contextMenuSection);
+	closeSectionModeMenu();
+});
+
+tileSectionButton.addEventListener("click", () => {
+	if (contextMenuSection) makeSectionTiled(contextMenuSection);
+	closeSectionModeMenu();
 });
 
 function openInspectModal() {
 	clearTimeout(inspectCloseTimer);
-	inspectModalLink.href = inspectedHref;
-	inspectModalLink.textContent = inspectedHref;
+	const hasLink = Boolean(inspectedHref);
+	inspectModalLinkRow.hidden = !hasLink;
+	inspectModalNoLink.hidden = hasLink;
+	if (hasLink) {
+		inspectModalLink.href = inspectedHref;
+		inspectModalLink.textContent = inspectedHref;
+	}
 	inspectModal.hidden = false;
 	inspectModal.setAttribute("aria-hidden", "false");
 	requestAnimationFrame(() => inspectModal.classList.add("is-open"));
@@ -118,11 +261,20 @@ function closeInspectModal() {
 }
 
 inspectMenuItem.addEventListener("click", () => {
+	contextMenuActionTrigger = null;
 	closeDesktopContextMenu();
 	openInspectModal();
 });
 
+openContextTarget.addEventListener("click", () => {
+	const actionTrigger = contextMenuActionTrigger;
+	contextMenuActionTrigger = null;
+	closeDesktopContextMenu();
+	if (actionTrigger) actionTrigger.click();
+});
+
 inspectCopyButton.addEventListener("click", async () => {
+	if (!inspectedHref) return;
 	try {
 		await navigator.clipboard.writeText(inspectedHref);
 		inspectCopyLabel.textContent = "Copied";
@@ -140,6 +292,29 @@ inspectCopyButton.addEventListener("click", async () => {
 });
 
 inspectClose.addEventListener("click", closeInspectModal);
+
+function openSiteInfoModal() {
+	clearTimeout(siteInfoCloseTimer);
+	siteInfoModal.hidden = false;
+	siteInfoModal.setAttribute("aria-hidden", "false");
+	requestAnimationFrame(() => siteInfoModal.classList.add("is-open"));
+	siteInfoClose.focus();
+}
+
+function closeSiteInfoModal() {
+	siteInfoModal.classList.remove("is-open");
+	siteInfoModal.setAttribute("aria-hidden", "true");
+	siteInfoCloseTimer = setTimeout(() => {
+		siteInfoModal.hidden = true;
+	}, 650);
+}
+
+siteInfoMenuItem.addEventListener("click", () => {
+	closeBodyContextMenu();
+	openSiteInfoModal();
+});
+siteInfoClose.addEventListener("click", closeSiteInfoModal);
+bodyOwnerLink.addEventListener("click", closeBodyContextMenu);
 
 const telegramTrigger = document.querySelector(".telegram-trigger");
 const telegramModal = document.getElementById("telegram-modal");
@@ -174,7 +349,6 @@ function openTestWarningModal() {
 	testWarningModal.hidden = false;
 	testWarningModal.setAttribute("aria-hidden", "false");
 	requestAnimationFrame(() => testWarningModal.classList.add("is-open"));
-	testWarningClose.focus();
 }
 
 function closeTestWarningModal() {
@@ -329,6 +503,76 @@ function moveSectionVertically(section, direction) {
 	}, destination, section);
 }
 
+function makeSectionFloating(section) {
+	if (section.classList.contains("is-floating")) return;
+	const rect = section.getBoundingClientRect();
+	const placeholder = document.createElement("div");
+	placeholder.className = "floating-section-placeholder";
+	placeholder.style.width = `${rect.width}px`;
+	placeholder.style.height = `${rect.height}px`;
+	section.parentNode.insertBefore(placeholder, section);
+	floatingPlaceholders.set(section, placeholder);
+	document.body.append(section);
+	section.classList.add("is-floating");
+	const width = Math.min(rect.width, window.innerWidth - 16);
+	section.style.width = `${width}px`;
+	section.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - width - 8))}px`;
+	section.style.top = `${Math.max(8, Math.min(rect.top, window.innerHeight - 48))}px`;
+	section.querySelector(".section-drag-handle").draggable = false;
+	if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+		section.animate([
+			{ transform: "perspective(900px) rotateX(8deg) scale(.97)", opacity: 0.84 },
+			{ transform: "perspective(900px) rotateX(0) scale(1)", opacity: 1 },
+		], {
+			duration: 420,
+			easing: "cubic-bezier(.2, 0, 0, 1)",
+		});
+	}
+}
+
+function makeSectionTiled(section) {
+	if (!section.classList.contains("is-floating")) return;
+	const placeholder = floatingPlaceholders.get(section);
+	if (placeholder?.parentNode) {
+		placeholder.parentNode.insertBefore(section, placeholder);
+		placeholder.remove();
+	}
+	floatingPlaceholders.delete(section);
+	section.classList.remove("is-floating");
+	section.style.removeProperty("width");
+	section.style.removeProperty("left");
+	section.style.removeProperty("top");
+	section.querySelector(".section-drag-handle").draggable = true;
+}
+
+function startFloatingSectionMove(section, handle, event) {
+	if (!section.classList.contains("is-floating") || event.button !== 0) return;
+	event.preventDefault();
+	floatingSection = section;
+	floatingPointerId = event.pointerId;
+	const rect = section.getBoundingClientRect();
+	floatingPointerOffsetX = event.clientX - rect.left;
+	floatingPointerOffsetY = event.clientY - rect.top;
+	handle.setPointerCapture(event.pointerId);
+	document.body.classList.add("is-section-moving");
+}
+
+function moveFloatingSection(section, event) {
+	if (floatingSection !== section || floatingPointerId !== event.pointerId) return;
+	const rect = section.getBoundingClientRect();
+	const maxLeft = Math.max(8, window.innerWidth - rect.width - 8);
+	const maxTop = Math.max(8, window.innerHeight - 48);
+	section.style.left = `${Math.max(8, Math.min(event.clientX - floatingPointerOffsetX, maxLeft))}px`;
+	section.style.top = `${Math.max(8, Math.min(event.clientY - floatingPointerOffsetY, maxTop))}px`;
+}
+
+function stopFloatingSectionMove(section, event) {
+	if (floatingSection !== section || floatingPointerId !== event.pointerId) return;
+	floatingSection = null;
+	floatingPointerId = null;
+	document.body.classList.remove("is-section-moving");
+}
+
 function clearDropMarkers() {
 	currentDropTarget = null;
 	currentDropKind = null;
@@ -370,7 +614,16 @@ document.querySelectorAll(".layout-left > section, .layout-right > section").for
 		controls.append(button);
 	});
 
+	const sectionModeStatus = document.createElement("span");
+	sectionModeStatus.className = "section-mode-status";
+	sectionModeStatus.textContent = "Floating";
+	controls.append(sectionModeStatus);
+
 	section.prepend(controls);
+	handle.addEventListener("pointerdown", (event) => startFloatingSectionMove(section, handle, event));
+	handle.addEventListener("pointermove", (event) => moveFloatingSection(section, event));
+	handle.addEventListener("pointerup", (event) => stopFloatingSectionMove(section, event));
+	handle.addEventListener("pointercancel", (event) => stopFloatingSectionMove(section, event));
 
 	section.addEventListener("dragstart", (event) => {
 		if (!event.target.closest(".section-drag-handle")) {
@@ -382,7 +635,9 @@ document.querySelectorAll(".layout-left > section, .layout-right > section").for
 		clearDropMarkers();
 		section.classList.add("is-dragging");
 		const rect = section.getBoundingClientRect();
-		event.dataTransfer.setDragImage(section, Math.round(rect.width / 2), 24);
+		const grabX = Math.max(0, Math.min(event.clientX - rect.left, rect.width));
+		const grabY = Math.max(0, Math.min(event.clientY - rect.top, rect.height));
+		event.dataTransfer.setDragImage(section, Math.round(grabX), Math.round(grabY));
 	});
 
 	section.addEventListener("dragend", () => {
@@ -422,7 +677,7 @@ document.addEventListener("dragover", (event) => {
 			return;
 		}
 
-		const targetSection = target.closest("section");
+		const targetSection = target.closest("section:not(.is-floating)");
 		if (targetSection && targetSection !== draggedSection &&
 			(!pointerColumn || targetSection.parentElement === pointerColumn)) {
 			const insertAfter = dragPointerY > targetSection.getBoundingClientRect().top + targetSection.offsetHeight / 2;

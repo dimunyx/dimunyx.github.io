@@ -20,10 +20,33 @@
 			<img src="assets/exit.png" alt=""/>
 		</button>
 		<div id="desktop-context-menu" class="desktop-context-menu" role="menu" aria-label="Desktop menu" hidden>
-			<button class="desktop-context-menu__item" type="button" role="menuitem">
+			<button id="open-context-target" class="desktop-context-menu__item" type="button" role="menuitem" hidden>
+				<img src="assets/open.png" alt="" aria-hidden="true"/>
+				<span>Open</span>
+			</button>
+			<button id="inspect-context-target" class="desktop-context-menu__item" type="button" role="menuitem">
 				<img src="assets/inspect.png" alt="" aria-hidden="true"/>
 				<span>Inspect</span>
 			</button>
+		</div>
+		<div id="section-mode-menu" class="desktop-context-menu section-mode-menu" role="menu" aria-label="Section layout" hidden>
+			<button id="float-section" class="desktop-context-menu__item" type="button" role="menuitem">
+				<img src="assets/float.png" alt="" aria-hidden="true"/><span>Float</span>
+			</button>
+			<button id="tile-section" class="desktop-context-menu__item" type="button" role="menuitem">
+				<img src="assets/tile.png" alt="" aria-hidden="true"/><span>Tile</span>
+			</button>
+		</div>
+		<div id="body-context-menu" class="desktop-context-menu body-context-menu" role="menu" aria-label="Page information" hidden>
+			<button id="site-info-menu-item" class="desktop-context-menu__item" type="button" role="menuitem">
+				<img src="assets/inspect.png" alt="" aria-hidden="true"/><span>Inspect</span>
+			</button>
+			<div id="current-layout-menu-item" class="desktop-context-menu__label">
+				<img src="assets/layout.png" alt="" aria-hidden="true"/><span id="current-layout-value">Tiling</span>
+			</div>
+			<a id="body-owner-link" class="desktop-context-menu__item" role="menuitem" href="https://github.com/dimunyx" target="_blank" rel="noopener noreferrer">
+				<img src="assets/owner.png" alt="" aria-hidden="true"/><span>dimunyx</span>
+			</a>
 		</div>
 		<div class="layout">
 			<div class="layout-left">
@@ -69,7 +92,7 @@
 						</li>
 					</ul>
 				</section>
-				<section>
+				<section class="repository-links">
 					<h2>Repositories</h2>
 					<ul>
 						<li>
@@ -127,12 +150,13 @@
 			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="inspect-modal-title" tabindex="-1">
 				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
 				<h2 id="inspect-modal-title">Inspect</h2>
-				<div class="inspect-modal__link-row">
+				<div id="inspect-modal-link-row" class="inspect-modal__link-row">
 					<a id="inspect-modal-link" class="inspect-modal__link" target="_blank" rel="noopener noreferrer"></a>
 					<button id="inspect-modal-copy" class="inspect-modal__copy" type="button">
 						<img src="assets/copy.png" alt="" aria-hidden="true"/><span>Copy</span>
 					</button>
 				</div>
+				<p id="inspect-modal-no-link" hidden>This is a button, it does not have a link!</p>
 			</div>
 		</div>
 		<div id="help-modal" class="telegram-modal" hidden aria-hidden="true">
@@ -145,14 +169,25 @@
 					<li>Material Design 3 based site.</li>
 					<li>Made by dimunyx based on copyleft :)</li>
 					<li>Reload button on the right.</li>
+					<li>Has floating & semi-tilinwg layouts.</li>
 				</ol>
 			</div>
 		</div>
 		<div id="test-warning-modal" class="telegram-modal" hidden aria-hidden="true">
 			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="test-warning-modal-title" tabindex="-1">
-				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
 				<h2 id="test-warning-modal-title">Warning</h2>
 				<p>This site is still in testing.</p>
+				<p class="test-warning-modal__version">v0.1.1</p>
+				<button class="warning-modal__close" type="button">Close</button>
+			</div>
+		</div>
+		<div id="site-info-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="site-info-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="site-info-modal-title">Site information</h2>
+				<p>Personal website of dimunyx.</p>
+				<p>Built with HTML, CSS and JavaScript.</p>
+				<p>Material Design 3 based site.</p>
 			</div>
 		</div>
 		<div id="using-now-modal" class="telegram-modal" hidden aria-hidden="true">
