@@ -25,6 +25,18 @@ const helpModal = document.getElementById("help-modal");
 const helpClose = helpModal.querySelector(".telegram-modal__close");
 const testWarningModal = document.getElementById("test-warning-modal");
 const testWarningClose = testWarningModal.querySelector(".warning-modal__close");
+fetch("./VERSION", { cache: "no-cache" })
+	.then((response) => {
+		if (!response.ok) throw new Error("Could not load VERSION");
+		return response.text();
+	})
+	.then((version) => {
+		const label = `v${version.trim().replace(/^v/i, "")}`;
+		document.querySelectorAll(".help-modal__version, .test-warning-modal__version").forEach((element) => {
+			element.textContent = label;
+		});
+	})
+	.catch((error) => console.error(error));
 let helpCloseTimer;
 let testWarningCloseTimer;
 const resetIcon = resetButton.querySelector("img");
