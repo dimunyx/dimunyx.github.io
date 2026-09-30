@@ -187,7 +187,8 @@ document.addEventListener("contextmenu", (event) => {
 		return;
 	}
 	const clickedLink = event.target.closest("a[href]");
-	if (event.target.closest(".layout-right > section")) {
+	const isStatsLink = clickedLink && event.target.closest(".github-stats");
+	if (event.target.closest(".layout-right > section") && !isStatsLink) {
 		event.preventDefault();
 		return;
 	}
@@ -204,7 +205,7 @@ document.addEventListener("contextmenu", (event) => {
 	event.preventDefault();
 	contextMenuReturnFocus = document.activeElement;
 	inspectedHref = clickedLink.href;
-	const canOpenFromMenu = clickedLink.closest(".social-links, .repository-links, .webring");
+	const canOpenFromMenu = clickedLink.closest(".social-links, .repository-links, .webring, .github-stats");
 	contextMenuActionTrigger = canOpenFromMenu ? clickedLink : null;
 	openContextTarget.hidden = !canOpenFromMenu;
 	openDesktopContextMenuAt(event, Boolean(canOpenFromMenu));

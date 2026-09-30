@@ -135,7 +135,7 @@ body {
 
 .desktop-context-menu {
         position: fixed;
-        z-index: 2147483646;
+        z-index: 2147483647;
         display: grid;
         width: 184px;
         padding: 6px;
@@ -775,7 +775,7 @@ hr {
 
 .telegram-modal {
         position: fixed;
-        z-index: 2147483647;
+        z-index: 2147483646;
         inset: 0;
         display: grid;
         place-items: center;
