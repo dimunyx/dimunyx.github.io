@@ -56,57 +56,38 @@
 				<section>
 					<h2>About Me</h2>
 					<button class="about-trigger" type="button" aria-haspopup="dialog">
-						<span class="about-trigger__hint">Click to read</span>
+						<span class="about-trigger__hint">Click me!</span>
 					</button>
 				</section>
 				<section>
 					<h2>Using now</h2>
 					<button class="about-trigger using-now-trigger" type="button" aria-haspopup="dialog">
-						<span class="about-trigger__hint">Click to reveal</span>
+						<span class="about-trigger__hint">Click me!</span>
 					</button>
 				</section>
 				<section>
 					<h2>Interests</h2>
 					<button class="about-trigger interests-trigger" type="button" aria-haspopup="dialog">
-						<span class="about-trigger__hint">Click to read</span>
+						<span class="about-trigger__hint">Click me!</span>
+					</button>
+				</section>
+				<section>
+					<h2>Experience</h2>
+					<button class="about-trigger experience-trigger" type="button" aria-haspopup="dialog">
+						<span class="about-trigger__hint">Click me!</span>
 					</button>
 				</section>
 				<section>
 					<h2>Social</h2>
-					<ul class="social-links">
-						<li>
-							<a href="https://github.com/dimunyx"> <i class="fab fa-github"></i>GitHub</a>
-						</li>
-						<li>
-							<a href="https://www.tiktok.com/@dimunyx"> <i class="fab fa-tiktok"></i>Tiktok</a>
-						</li>
-						<li>
-							<a href="https://www.youtube.com/@dimunyx"> <i class="fab fa-youtube"></i>YouTube</a>
-						</li>
-						<li>
-							<a href="https://www.twitch.tv/dimunyx1"> <i class="fa-brands fa-twitch"></i>Twitch</a>
-						</li>
-						<li>
-							<button class="telegram-trigger" type="button"><i class="fa-brands fa-telegram"></i>Telegram</button>
-						</li>
-					</ul>
+					<button class="about-trigger social-trigger" type="button" aria-haspopup="dialog">
+						<span class="about-trigger__hint">Click me!</span>
+					</button>
 				</section>
-				<section class="repository-links">
-					<h2>Repositories</h2>
-					<ul>
-						<li>
-							<a href="https://github.com/dimunyx/dimunyx.github.io"> <i class="fab fa-github"></i>Website</a>
-						</li>
-						<li>
-							<a href="https://github.com/dimunyx/dimfetch"> <i class="fab fa-github"></i>Fetch</a>
-						</li>
-						<li>
-							<a href="https://github.com/dimunyx/NixOS-dotfiles"> <i class="fab fa-github"></i>Nix dots</a>
-						</li>
-						<li>
-							<a href="https://github.com/dimunyx/NixOS-configuration"> <i class="fab fa-github"></i>Nix conf</a>
-						</li>
-					</ul>
+				<section>
+					<h2>Repos</h2>
+					<button class="about-trigger repos-trigger" type="button" aria-haspopup="dialog">
+						<span class="about-trigger__hint">Click me!</span>
+					</button>
 				</section>
 			</div>
 			<div class="layout-right">
@@ -131,9 +112,9 @@
 			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" tabindex="-1">
 				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
 				<h2 id="about-modal-title">About Me</h2>
-				<p>Linux enthusiast and aspiring developer.</p>
-				<p>Using Linux since July 2025!</p>
-				<p>14 years old.</p>
+				<p>Linux user and C++ enthusiast.</p>
+				<p>Using Linux since mid-July 2025.</p>
+				<p>I'm 14 years old, turning 15 soon, and passionate about programming.</p>
 			</div>
 		</div>
 		<div id="interests-modal" class="telegram-modal" hidden aria-hidden="true">
@@ -142,7 +123,69 @@
 				<h2 id="interests-modal-title">Interests</h2>
 				<p>C++ programs.</p>
 				<p>Linux ricing.</p>
-				<p>WM/DE i've used:<br><code>MangoWM</code><br><code>Hyprland</code><br><code>Sway & SwayFX</code><br><code>Niri</code><br><code>BSPWM</code><br><code>DWM</code><br><code>XMonad</code><br><code>Wayfire</code><br><code>OpenBox</code><br><code>Umbriel</code><br><code>KDE Plasma</code><br><code>GNOME</code><br><code>Cinnamon</code></p>
+			</div>
+		</div>
+		<div id="experience-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog experience-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="experience-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="experience-modal-title">Experience</h2>
+				<div class="experience-columns">
+					<div class="experience-column">
+						<h3>WM</h3>
+						<ol>
+							<li>Umbriel</li>
+							<li>Niri</li>
+							<li>Hyprland</li>
+							<li>BSPWM</li>
+							<li>Sway &amp; SwayFX</li>
+							<li>XMonad</li>
+							<li>DWM</li>
+							<li>MangoWM</li>
+							<li>Wayfire</li>
+							<li>OpenBOX</li>
+						</ol>
+					</div>
+					<div class="experience-column">
+						<h3>Distro</h3>
+						<ol>
+							<li>NixOS</li>
+							<li>Arch Linux</li>
+							<li>Gentoo GNU/Linux</li>
+							<li>Linux Mint</li>
+							<li>Ubuntu</li>
+							<li>Void Linux</li>
+							<li>Alpine</li>
+							<li>GNU Guix</li>
+							<li>KalibriOS</li>
+							<li>Windows 7, 10, 11 ;)</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="social-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog links-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="social-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="social-modal-title">Social</h2>
+				<ul class="social-links links-modal__list">
+					<li><a href="https://github.com/dimunyx"><i class="fab fa-github"></i>GitHub</a></li>
+					<li><a href="https://www.tiktok.com/@dimunyx"><i class="fab fa-tiktok"></i>Tiktok</a></li>
+					<li><a href="https://www.youtube.com/@dimunyx"><i class="fab fa-youtube"></i>YouTube</a></li>
+					<li><a href="https://www.twitch.tv/dimunyx1"><i class="fa-brands fa-twitch"></i>Twitch</a></li>
+					<li><button class="telegram-trigger" type="button"><i class="fa-brands fa-telegram"></i>Telegram</button></li>
+				</ul>
+			</div>
+		</div>
+		<div id="repos-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog links-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="repos-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="repos-modal-title">Repos</h2>
+				<ul class="repository-links links-modal__list">
+					<li><a href="https://github.com/dimunyx/dimunyx.github.io"><i class="fab fa-github"></i>Website</a></li>
+					<li><a href="https://github.com/dimunyx/dimfetch"><i class="fab fa-github"></i>Fetch</a></li>
+					<li><a href="https://github.com/dimunyx/NixOS-dotfiles"><i class="fab fa-github"></i>Nix dots</a></li>
+					<li><a href="https://github.com/dimunyx/NixOS-configuration"><i class="fab fa-github"></i>Nix conf</a></li>
+				</ul>
 			</div>
 		</div>
 		<div id="inspect-modal" class="telegram-modal" hidden aria-hidden="true">
@@ -175,7 +218,7 @@
 		<div id="test-warning-modal" class="telegram-modal" hidden aria-hidden="true">
 			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="test-warning-modal-title" tabindex="-1">
 				<h2 id="test-warning-modal-title">Warning</h2>
-				<p>This site is still in testing.</p>
+				<p>This website is under development.</p>
 				<p class="test-warning-modal__version">v…</p>
 				<button class="warning-modal__close" type="button">Close</button>
 			</div>

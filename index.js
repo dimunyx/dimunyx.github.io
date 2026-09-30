@@ -168,7 +168,7 @@ document.addEventListener("contextmenu", (event) => {
 		positionContextMenuAt(sectionModeMenu, event);
 		return;
 	}
-	const revealTrigger = event.target.closest(".about-trigger");
+	const revealTrigger = event.target.closest(".about-trigger, .telegram-trigger");
 	if (revealTrigger) {
 		event.preventDefault();
 		contextMenuActionTrigger = revealTrigger;
@@ -344,12 +344,25 @@ const aboutClose = aboutModal.querySelector(".telegram-modal__close");
 const interestsTrigger = document.querySelector(".interests-trigger");
 const interestsModal = document.getElementById("interests-modal");
 const interestsClose = interestsModal.querySelector(".telegram-modal__close");
+const experienceTrigger = document.querySelector(".experience-trigger");
+const experienceModal = document.getElementById("experience-modal");
+const experienceClose = experienceModal.querySelector(".telegram-modal__close");
+const socialTrigger = document.querySelector(".social-trigger");
+const socialModal = document.getElementById("social-modal");
+const socialClose = socialModal.querySelector(".telegram-modal__close");
+const reposTrigger = document.querySelector(".repos-trigger");
+const reposModal = document.getElementById("repos-modal");
+const reposClose = reposModal.querySelector(".telegram-modal__close");
 const usingNowTrigger = document.querySelector(".using-now-trigger");
 const usingNowModal = document.getElementById("using-now-modal");
 const usingNowClose = usingNowModal.querySelector(".telegram-modal__close");
 let telegramCloseTimer;
+let telegramReturnFocus;
 let aboutCloseTimer;
 let interestsCloseTimer;
+let experienceCloseTimer;
+let socialCloseTimer;
+let reposCloseTimer;
 let usingNowCloseTimer;
 
 const modalScrollObserver = new MutationObserver(() => {
@@ -383,6 +396,13 @@ openTestWarningModal();
 
 function openTelegramModal() {
 	clearTimeout(telegramCloseTimer);
+	telegramReturnFocus = socialModal && !socialModal.hidden ? socialTrigger : telegramTrigger;
+	if (socialModal && !socialModal.hidden) {
+		clearTimeout(socialCloseTimer);
+		socialModal.classList.remove("is-open");
+		socialModal.setAttribute("aria-hidden", "true");
+		socialModal.hidden = true;
+	}
 	telegramModal.hidden = false;
 	telegramModal.setAttribute("aria-hidden", "false");
 	requestAnimationFrame(() => telegramModal.classList.add("is-open"));
@@ -394,7 +414,7 @@ function closeTelegramModal() {
 	telegramModal.setAttribute("aria-hidden", "true");
 	telegramCloseTimer = setTimeout(() => {
 		telegramModal.hidden = true;
-		telegramTrigger.focus();
+		telegramReturnFocus.focus();
 	}, 650);
 }
 
@@ -440,6 +460,66 @@ function closeInterestsModal() {
 
 interestsTrigger.addEventListener("click", openInterestsModal);
 interestsClose.addEventListener("click", closeInterestsModal);
+
+function openExperienceModal() {
+	clearTimeout(experienceCloseTimer);
+	experienceModal.hidden = false;
+	experienceModal.setAttribute("aria-hidden", "false");
+	requestAnimationFrame(() => experienceModal.classList.add("is-open"));
+	experienceClose.focus();
+}
+
+function closeExperienceModal() {
+	experienceModal.classList.remove("is-open");
+	experienceModal.setAttribute("aria-hidden", "true");
+	experienceCloseTimer = setTimeout(() => {
+		experienceModal.hidden = true;
+		experienceTrigger.focus();
+	}, 650);
+}
+
+experienceTrigger.addEventListener("click", openExperienceModal);
+experienceClose.addEventListener("click", closeExperienceModal);
+
+function openSocialModal() {
+	clearTimeout(socialCloseTimer);
+	socialModal.hidden = false;
+	socialModal.setAttribute("aria-hidden", "false");
+	requestAnimationFrame(() => socialModal.classList.add("is-open"));
+	socialClose.focus();
+}
+
+function closeSocialModal() {
+	socialModal.classList.remove("is-open");
+	socialModal.setAttribute("aria-hidden", "true");
+	socialCloseTimer = setTimeout(() => {
+		socialModal.hidden = true;
+		socialTrigger.focus();
+	}, 650);
+}
+
+socialTrigger.addEventListener("click", openSocialModal);
+socialClose.addEventListener("click", closeSocialModal);
+
+function openReposModal() {
+	clearTimeout(reposCloseTimer);
+	reposModal.hidden = false;
+	reposModal.setAttribute("aria-hidden", "false");
+	requestAnimationFrame(() => reposModal.classList.add("is-open"));
+	reposClose.focus();
+}
+
+function closeReposModal() {
+	reposModal.classList.remove("is-open");
+	reposModal.setAttribute("aria-hidden", "true");
+	reposCloseTimer = setTimeout(() => {
+		reposModal.hidden = true;
+		reposTrigger.focus();
+	}, 650);
+}
+
+reposTrigger.addEventListener("click", openReposModal);
+reposClose.addEventListener("click", closeReposModal);
 
 function openUsingNowModal() {
 	clearTimeout(usingNowCloseTimer);

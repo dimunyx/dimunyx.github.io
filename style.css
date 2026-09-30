@@ -575,25 +575,40 @@ ul {
         list-style: none;
 }
 
-section ul {
+section ul,
+.links-modal__list {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 12px;
 }
 
-section ul li {
+.links-modal__list {
+        flex-direction: column;
+        flex-wrap: nowrap;
+}
+
+section ul li,
+.links-modal__list li {
         flex: 1 1 calc(25% - 12px);
         min-width: 0;
         margin: 0;
 }
 
-section ul.social-links li {
-        flex-basis: calc(20% - 12px);
+section ul.social-links li,
+.links-modal__list.social-links li {
+        flex-basis: auto;
+}
+
+.links-modal__list li {
+        flex: 0 0 auto;
+        width: 100%;
 }
 
 section ul li a,
-section ul li .telegram-trigger {
+section ul li .telegram-trigger,
+.links-modal__list li a,
+.links-modal__list li .telegram-trigger {
         display: flex;
         min-height: 40px;
         width: 100%;
@@ -615,12 +630,16 @@ section ul li .telegram-trigger {
 }
 
 section ul li a i,
-section ul li .telegram-trigger i {
+section ul li .telegram-trigger i,
+.links-modal__list li a i,
+.links-modal__list li .telegram-trigger i {
         font-size: 1.2rem;
 }
 
 section ul li a:hover,
-section ul li .telegram-trigger:hover {
+section ul li .telegram-trigger:hover,
+.links-modal__list li a:hover,
+.links-modal__list li .telegram-trigger:hover {
         background: #cba6f7;
         color: #1e1e2e;
         transform: translateY(-1px);
@@ -792,9 +811,45 @@ hr {
         width: min(100%, 550px);
 }
 
+.experience-modal__dialog {
+        width: min(100%, 700px);
+}
+
+.links-modal__dialog {
+        width: min(100%, 650px);
+}
+
+.experience-columns {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        text-align: left;
+}
+
+.experience-column {
+        min-width: 0;
+        padding: 16px;
+        border-radius: var(--md-radius-medium);
+        background: var(--md-surface);
+        color: var(--md-on-surface-variant);
+}
+
+.experience-column h3 {
+        margin: 0 0 8px;
+        color: var(--md-on-surface);
+}
+
+.experience-column ol {
+        margin: 0;
+        padding-left: 1.7em;
+}
+
+.experience-column li {
+        padding: 3px 0 3px 4px;
+}
+
 #using-now-modal .telegram-modal__dialog {
         width: min(100%, 700px);
-        text-align: left;
 }
 
 .using-now-modal__content {
@@ -1031,6 +1086,10 @@ hr {
 
         .telegram-modal__dialog {
                 padding: 24px 18px;
+        }
+
+        .experience-columns {
+                grid-template-columns: 1fr;
         }
 }
 
