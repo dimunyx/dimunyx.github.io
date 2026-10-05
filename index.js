@@ -18,9 +18,52 @@ let resizeStartX = 0;
 let resizeStartY = 0;
 let resizeStartWidth = 0;
 let resizeStartHeight = 0;
+const SETTINGS_STORAGE_KEY = "dimunyx-settings-v1";
+const DEFAULT_SETTINGS = Object.freeze({
+	accent: "#89b4fa",
+	compactMode: false,
+	showSectionControls: true,
+});
+const ACCENT_COLORS = new Set(["#89b4fa", "#cba6f7", "#a6e3a1", "#fab387", "#f38ba8", "#f9e2af", "#11111b", "#ffffff"]);
+const isValidHexColor = (color) => /^#[0-9a-f]{6}$/i.test(color);
+const siteSections = [...document.querySelectorAll(".layout-left > section, .layout-right > section, #nixwebring")];
+const defaultLayout = {
+	columns: {
+		left: [...document.querySelectorAll(".layout-left > section")],
+		right: [...document.querySelectorAll(".layout-right > section")],
+	},
+};
+
+function loadSettings() {
+	try {
+		const stored = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) || "{}");
+		return {
+			compactMode: typeof stored.compactMode === "boolean" ? stored.compactMode : DEFAULT_SETTINGS.compactMode,
+			showSectionControls: typeof stored.showSectionControls === "boolean" ? stored.showSectionControls : DEFAULT_SETTINGS.showSectionControls,
+			accent: isValidHexColor(stored.accent) ? stored.accent.toLowerCase() : DEFAULT_SETTINGS.accent,
+		};
+	} catch {
+		return { ...DEFAULT_SETTINGS };
+	}
+}
+
+let siteSettings = loadSettings();
+
+function motionIsReduced() {
+	return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function modalCloseDelay() {
+	return motionIsReduced() ? 0 : 650;
+}
+
 const resetButton = document.getElementById("reset-site");
 const exitButton = document.getElementById("exit-site");
 const helpButton = document.getElementById("help-site");
+const settingsButton = document.getElementById("settings-site");
+const settingsModal = document.getElementById("settings-modal");
+const settingsClose = settingsModal.querySelector(".telegram-modal__close");
+let settingsCloseTimer;
 const helpModal = document.getElementById("help-modal");
 const helpClose = helpModal.querySelector(".telegram-modal__close");
 const testWarningModal = document.getElementById("test-warning-modal");
@@ -32,7 +75,7 @@ fetch("./VERSION", { cache: "no-cache" })
 	})
 	.then((version) => {
 		const label = `v${version.trim().replace(/^v/i, "")}`;
-		document.querySelectorAll(".help-modal__version, .test-warning-modal__version").forEach((element) => {
+		document.querySelectorAll(".help-modal__version, .test-warning-modal__version, .settings-current-version").forEach((element) => {
 			element.textContent = label;
 		});
 	})
@@ -69,7 +112,7 @@ function closeHelpModal() {
 	helpCloseTimer = setTimeout(() => {
 		helpModal.hidden = true;
 		helpButton.focus();
-	}, 650);
+	}, modalCloseDelay());
 }
 
 helpButton.addEventListener("click", openHelpModal);
@@ -133,7 +176,7 @@ function closeBodyContextMenu() {
 
 function hideContextMenu(menu) {
 	if (menu.hidden) return;
-	if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+	if (motionIsReduced()) {
 		menu.hidden = true;
 		menu.classList.remove("is-closing");
 		return;
@@ -177,7 +220,7 @@ document.addEventListener("contextmenu", (event) => {
 		openDesktopContextMenuAt(event, true);
 		return;
 	}
-	const siteActionButton = event.target.closest("#help-site, #reset-site, #exit-site");
+	const siteActionButton = event.target.closest("#help-site, #reset-site, #exit-site, #settings-site");
 	if (siteActionButton) {
 		event.preventDefault();
 		contextMenuActionTrigger = siteActionButton;
@@ -187,8 +230,7 @@ document.addEventListener("contextmenu", (event) => {
 		return;
 	}
 	const clickedLink = event.target.closest("a[href]");
-	const isStatsLink = clickedLink && event.target.closest(".github-stats");
-	if (event.target.closest(".layout-right > section") && !isStatsLink) {
+	if (event.target.closest(".layout-right > section")) {
 		event.preventDefault();
 		return;
 	}
@@ -205,7 +247,7 @@ document.addEventListener("contextmenu", (event) => {
 	event.preventDefault();
 	contextMenuReturnFocus = document.activeElement;
 	inspectedHref = clickedLink.href;
-	const canOpenFromMenu = clickedLink.closest(".social-links, .repository-links, .webring, .github-stats");
+	const canOpenFromMenu = clickedLink.closest(".social-links, .repository-links, .webring");
 	contextMenuActionTrigger = canOpenFromMenu ? clickedLink : null;
 	openContextTarget.hidden = !canOpenFromMenu;
 	openDesktopContextMenuAt(event, Boolean(canOpenFromMenu));
@@ -237,6 +279,7 @@ function updateCurrentLayoutLabel() {
 	currentLayoutValue.textContent = floatingCount === 0
 		? "Tiling"
 		: `Tiling + ${floatingCount} floating`;
+	updateSettingsInfo();
 }
 
 function openBodyContextMenuAt(event) {
@@ -277,7 +320,7 @@ function closeInspectModal() {
 		if (contextMenuReturnFocus instanceof HTMLElement && contextMenuReturnFocus.isConnected) {
 			contextMenuReturnFocus.focus();
 		}
-	}, 650);
+	}, modalCloseDelay());
 }
 
 inspectMenuItem.addEventListener("click", () => {
@@ -326,7 +369,7 @@ function closeSiteInfoModal() {
 	siteInfoModal.setAttribute("aria-hidden", "true");
 	siteInfoCloseTimer = setTimeout(() => {
 		siteInfoModal.hidden = true;
-	}, 650);
+	}, modalCloseDelay());
 }
 
 siteInfoMenuItem.addEventListener("click", () => {
@@ -389,7 +432,7 @@ function closeTestWarningModal() {
 	testWarningModal.setAttribute("aria-hidden", "true");
 	testWarningCloseTimer = setTimeout(() => {
 		testWarningModal.hidden = true;
-	}, 650);
+	}, modalCloseDelay());
 }
 
 testWarningClose.addEventListener("click", closeTestWarningModal);
@@ -416,7 +459,7 @@ function closeTelegramModal() {
 	telegramCloseTimer = setTimeout(() => {
 		telegramModal.hidden = true;
 		telegramReturnFocus.focus();
-	}, 650);
+	}, modalCloseDelay());
 }
 
 telegramTrigger.addEventListener("click", openTelegramModal);
@@ -436,7 +479,7 @@ function closeAboutModal() {
 	aboutCloseTimer = setTimeout(() => {
 		aboutModal.hidden = true;
 		aboutTrigger.focus();
-	}, 650);
+	}, modalCloseDelay());
 }
 
 aboutTrigger.addEventListener("click", openAboutModal);
@@ -456,7 +499,7 @@ function closeInterestsModal() {
 	interestsCloseTimer = setTimeout(() => {
 		interestsModal.hidden = true;
 		interestsTrigger.focus();
-	}, 650);
+	}, modalCloseDelay());
 }
 
 interestsTrigger.addEventListener("click", openInterestsModal);
@@ -476,7 +519,7 @@ function closeExperienceModal() {
 	experienceCloseTimer = setTimeout(() => {
 		experienceModal.hidden = true;
 		experienceTrigger.focus();
-	}, 650);
+	}, modalCloseDelay());
 }
 
 experienceTrigger.addEventListener("click", openExperienceModal);
@@ -496,7 +539,7 @@ function closeSocialModal() {
 	socialCloseTimer = setTimeout(() => {
 		socialModal.hidden = true;
 		socialTrigger.focus();
-	}, 650);
+	}, modalCloseDelay());
 }
 
 socialTrigger.addEventListener("click", openSocialModal);
@@ -516,7 +559,7 @@ function closeReposModal() {
 	reposCloseTimer = setTimeout(() => {
 		reposModal.hidden = true;
 		reposTrigger.focus();
-	}, 650);
+	}, modalCloseDelay());
 }
 
 reposTrigger.addEventListener("click", openReposModal);
@@ -536,13 +579,17 @@ function closeUsingNowModal() {
 	usingNowCloseTimer = setTimeout(() => {
 		usingNowModal.hidden = true;
 		usingNowTrigger.focus();
-	}, 650);
+	}, modalCloseDelay());
 }
 
 usingNowTrigger.addEventListener("click", openUsingNowModal);
 usingNowClose.addEventListener("click", closeUsingNowModal);
 
 function animateSectionMove(move, destination, movingSection = draggedSection) {
+	if (motionIsReduced()) {
+		move();
+		return;
+	}
 	if (draggedSection === movingSection) {
 		move();
 		return;
@@ -623,7 +670,8 @@ function makeSectionFloating(section) {
 		resizeHandle.classList.add("is-active");
 	}
 	section.querySelector(".section-drag-handle").draggable = false;
-	if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+	updateCurrentLayoutLabel();
+	if (!motionIsReduced()) {
 		section.animate([
 			{ transform: "perspective(900px) rotateX(8deg) scale(.97)", opacity: 0.84 },
 			{ transform: "perspective(900px) rotateX(0) scale(1)", opacity: 1 },
@@ -652,6 +700,7 @@ function makeSectionTiled(section) {
 	section.style.removeProperty("left");
 	section.style.removeProperty("top");
 	section.querySelector(".section-drag-handle").draggable = true;
+	updateCurrentLayoutLabel();
 }
 
 window.addEventListener("resize", () => {
@@ -858,3 +907,118 @@ document.addEventListener("dragover", (event) => {
 		clearDropMarkers();
 	});
 });
+
+const settingsAccent = document.getElementById("settings-accent");
+const settingsCustomAccent = document.getElementById("settings-custom-accent");
+const settingsCustomAccentField = document.getElementById("settings-custom-accent-field");
+const settingsCompact = document.getElementById("settings-compact");
+const settingsControls = document.getElementById("settings-controls");
+const settingsTiledCount = document.getElementById("settings-tiled-count");
+const settingsFloatingCount = document.getElementById("settings-floating-count");
+
+function saveSettings() {
+	try {
+		localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(siteSettings));
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+function applySettings() {
+	const root = document.documentElement;
+	root.style.setProperty("--md-primary", siteSettings.accent);
+	root.classList.toggle("is-compact", siteSettings.compactMode);
+	root.classList.toggle("hide-section-controls", !siteSettings.showSectionControls);
+	const isPresetAccent = ACCENT_COLORS.has(siteSettings.accent);
+	settingsAccent.value = isPresetAccent ? siteSettings.accent : "custom";
+	settingsCustomAccent.value = siteSettings.accent;
+	settingsCustomAccentField.hidden = isPresetAccent;
+	settingsCompact.checked = siteSettings.compactMode;
+	settingsControls.checked = siteSettings.showSectionControls;
+	updateSettingsInfo();
+}
+
+function restoreDefaultLayout() {
+	const leftColumn = document.querySelector(".layout-left");
+	const rightColumn = document.querySelector(".layout-right");
+	siteSections.filter((section) => section.id !== "nixwebring").forEach(makeSectionTiled);
+	defaultLayout.columns.left.forEach((section) => leftColumn.append(section));
+	defaultLayout.columns.right.forEach((section) => rightColumn.append(section));
+	updateCurrentLayoutLabel();
+}
+
+function updateSettingsInfo() {
+	if (!settingsTiledCount || !settingsFloatingCount) return;
+	const floatingCount = siteSections.filter((section) => section.classList.contains("is-floating")).length;
+	settingsFloatingCount.textContent = String(floatingCount);
+	settingsTiledCount.textContent = String(siteSections.length - floatingCount);
+}
+
+function openSettingsModal() {
+	clearTimeout(settingsCloseTimer);
+	updateSettingsInfo();
+	settingsModal.hidden = false;
+	settingsModal.setAttribute("aria-hidden", "false");
+	requestAnimationFrame(() => settingsModal.classList.add("is-open"));
+	settingsClose.focus();
+}
+
+function closeSettingsModal() {
+	settingsModal.classList.remove("is-open");
+	settingsModal.setAttribute("aria-hidden", "true");
+	settingsCloseTimer = setTimeout(() => {
+		settingsModal.hidden = true;
+		settingsButton.focus();
+	}, modalCloseDelay());
+}
+
+settingsButton.addEventListener("click", openSettingsModal);
+settingsClose.addEventListener("click", closeSettingsModal);
+
+settingsAccent.addEventListener("change", () => {
+	if (settingsAccent.value === "custom") {
+		settingsCustomAccentField.hidden = false;
+		settingsCustomAccent.focus();
+		return;
+	}
+	if (!ACCENT_COLORS.has(settingsAccent.value)) return;
+	siteSettings.accent = settingsAccent.value;
+	applySettings();
+	saveSettings();
+});
+
+settingsCustomAccent.addEventListener("change", () => {
+	const color = settingsCustomAccent.value.trim();
+	if (!isValidHexColor(color)) {
+		settingsCustomAccent.setCustomValidity("Enter a HEX color in #RRGGBB format.");
+		settingsCustomAccent.reportValidity();
+		settingsCustomAccent.value = siteSettings.accent;
+		return;
+	}
+	settingsCustomAccent.setCustomValidity("");
+	siteSettings.accent = color.toLowerCase();
+	applySettings();
+	saveSettings();
+});
+
+document.getElementById("settings-reset-appearance").addEventListener("click", () => {
+	siteSettings.accent = DEFAULT_SETTINGS.accent;
+	applySettings();
+	saveSettings();
+});
+
+[
+	[settingsCompact, "compactMode"],
+	[settingsControls, "showSectionControls"],
+].forEach(([control, key]) => {
+	control.addEventListener("change", () => {
+		siteSettings[key] = control.checked;
+		applySettings();
+		saveSettings();
+	});
+});
+
+document.getElementById("settings-default-layout").addEventListener("click", restoreDefaultLayout);
+
+applySettings();

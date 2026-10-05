@@ -9,6 +9,9 @@
    		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 	</head>
 	<body>
+		<button id="settings-site" class="help-site settings-site" type="button" aria-label="Settings" title="Settings">
+			<img src="assets/settings.png" alt=""/>
+		</button>
 		<button id="help-site" class="help-site" type="button" aria-label="Help" title="Help">
 			<img src="assets/help.png" alt=""/>
 		</button>
@@ -199,6 +202,49 @@
 					</button>
 				</div>
 				<p id="inspect-modal-no-link" hidden>This is a button, it does not have a link!</p>
+			</div>
+		</div>
+		<div id="settings-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog settings-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="settings-modal-title">Settings</h2>
+				<div class="settings-grid">
+					<section class="settings-card">
+						<h3>Appearance</h3>
+						<label class="settings-color-field" for="settings-accent">
+							<span>Primary color</span>
+							<select id="settings-accent">
+								<option value="#89b4fa">Blue</option>
+								<option value="#cba6f7">Purple</option>
+								<option value="#a6e3a1">Green</option>
+								<option value="#fab387">Peach</option>
+								<option value="#f38ba8">Red</option>
+								<option value="#f9e2af">Yellow</option>
+								<option value="#11111b">Black</option>
+								<option value="#ffffff">White</option>
+								<option value="custom">Custom</option>
+							</select>
+						</label>
+						<label class="settings-color-field" id="settings-custom-accent-field" for="settings-custom-accent" hidden>
+							<span>Custom HEX</span>
+							<input id="settings-custom-accent" type="text" inputmode="text" placeholder="#89b4fa" maxlength="7" autocomplete="off" spellcheck="false" aria-label="Custom HEX color">
+						</label>
+						<button class="settings-action" id="settings-reset-appearance" type="button">Reset appearance</button>
+					</section>
+					<section class="settings-card">
+						<h3>Layout</h3>
+						<label class="settings-option"><span>Compact mode</span><input id="settings-compact" type="checkbox"></label>
+						<label class="settings-option"><span>Show section controls</span><input id="settings-controls" type="checkbox"></label>
+						<button class="settings-action" id="settings-default-layout" type="button">Restore default layout</button>
+					</section>
+					<section class="settings-card settings-about-card">
+						<h3>About</h3>
+						<p>Version: <span class="settings-current-version">Loading…</span></p>
+						<p>Sections: <span id="settings-tiled-count">0</span> tiled, <span id="settings-floating-count">0</span> floating</p>
+						<p>dimunyx.github.io</p>
+						<p>This site is still under development.</p>
+					</section>
+				</div>
 			</div>
 		</div>
 		<div id="help-modal" class="telegram-modal" hidden aria-hidden="true">

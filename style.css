@@ -65,7 +65,7 @@ body {
 }
 
 .reset-site:hover {
-        background: #cba6f7;
+        background: var(--md-primary);
         box-shadow: 0 4px 12px #00000055;
         transform: rotate(-45deg);
 }
@@ -112,6 +112,10 @@ body {
         right: clamp(16px, 3vw, 40px);
 }
 
+.settings-site {
+	right: calc(clamp(16px, 3vw, 40px) + 168px);
+}
+
 .help-site img {
         display: block;
         width: 24px;
@@ -120,7 +124,7 @@ body {
 }
 
 .help-site:hover {
-        background: #cba6f7;
+        background: var(--md-primary);
         box-shadow: 0 4px 12px #00000055;
         transform: translateY(-1px);
 }
@@ -218,8 +222,8 @@ body {
 
 .desktop-context-menu__item:hover,
 .desktop-context-menu__item:focus-visible {
-        background: #cba6f7;
-        color: #1e1e2e;
+        background: var(--md-primary);
+        color: var(--md-on-primary);
 }
 
 .desktop-context-menu__item:hover {
@@ -473,8 +477,8 @@ section.is-floating .section-mode-status {
 
 .section-order-button:hover,
 .section-order-button:focus-visible {
-        background: #cba6f7;
-        color: #1e1e2e;
+        background: var(--md-primary);
+        color: var(--md-on-primary);
 }
 
 .section-order-button:hover {
@@ -482,7 +486,7 @@ section.is-floating .section-mode-status {
 }
 
 .section-drag-handle:hover {
-        background: #cba6f7;
+        background: var(--md-primary);
         transform: translateY(-1px);
 }
 
@@ -498,7 +502,7 @@ body.is-section-moving * {
 .section-drag-handle:focus-visible {
         outline: 3px solid var(--md-primary);
         outline-offset: 2px;
-        background: #cba6f7;
+        background: var(--md-primary);
 }
 
 .section-drag-handle__icon {
@@ -539,7 +543,7 @@ body.is-section-moving * {
 
 .section-resize-handle:hover,
 .section-resize-handle:focus-visible {
-        background: #cba6f7;
+        background: var(--md-primary);
 }
 
 body.is-section-resizing,
@@ -640,8 +644,8 @@ section ul li a:hover,
 section ul li .telegram-trigger:hover,
 .links-modal__list li a:hover,
 .links-modal__list li .telegram-trigger:hover {
-        background: #cba6f7;
-        color: #1e1e2e;
+        background: var(--md-primary);
+        color: var(--md-on-primary);
         transform: translateY(-1px);
 }
 
@@ -686,8 +690,8 @@ section ul li .telegram-trigger:hover,
 }
 
 .about-trigger:hover .about-trigger__hint {
-        background: #cba6f7;
-        color: #1e1e2e;
+        background: var(--md-primary);
+        color: var(--md-on-primary);
         transform: translateY(-1px);
 }
 
@@ -734,8 +738,8 @@ section ul li .telegram-trigger:hover,
 
 .webring a:hover,
 .webring a:focus-visible {
-        background: #cba6f7;
-        color: #1e1e2e;
+        background: var(--md-primary);
+        color: var(--md-on-primary);
 }
 
 .webring a:hover {
@@ -804,6 +808,134 @@ hr {
         text-align: center;
         transform: scale(.94);
         transition: transform 500ms cubic-bezier(.2,.8,.2,1);
+}
+
+.settings-modal__dialog {
+	width: min(100%, 800px);
+	text-align: left;
+}
+
+.settings-modal__dialog > h2 {
+	text-align: center;
+}
+
+.settings-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.settings-card {
+	min-width: 0;
+	padding: 16px;
+	border: 1px solid var(--md-outline-variant);
+	border-radius: var(--md-radius-medium);
+	background: var(--md-surface-container);
+	text-align: left;
+}
+
+.settings-card h3 {
+	margin: 0 0 12px;
+	color: var(--md-on-surface);
+	font-size: 1rem;
+}
+
+.settings-card p {
+	margin: 8px 0 0;
+	color: var(--md-on-surface-variant);
+}
+
+.settings-color-field,
+.settings-option {
+	display: flex;
+	min-height: 40px;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	color: var(--md-on-surface-variant);
+}
+
+.settings-color-field select,
+.settings-color-field input {
+	max-width: 55%;
+	min-width: 0;
+	min-height: 38px;
+	padding: 6px 10px;
+	border: 1px solid var(--md-outline-variant);
+	border-radius: var(--md-radius-small);
+	background: var(--md-surface);
+	color: var(--md-on-surface);
+	font: inherit;
+}
+
+.settings-color-field input {
+	width: 10ch;
+}
+
+.settings-option input[type="checkbox"] {
+	position: relative;
+	flex: 0 0 42px;
+	width: 42px;
+	height: 24px;
+	margin: 0;
+	appearance: none;
+	border: 1px solid var(--md-outline);
+	border-radius: 999px;
+	background: var(--md-secondary-container);
+	cursor: pointer;
+	transition: background-color var(--md-motion), border-color var(--md-motion);
+}
+
+.settings-option input[type="checkbox"]::before {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: var(--md-on-surface-variant);
+	content: "";
+	transition: transform var(--md-motion), background-color var(--md-motion);
+}
+
+.settings-option input[type="checkbox"]:checked {
+	border-color: var(--md-primary);
+	background: var(--md-primary);
+}
+
+.settings-option input[type="checkbox"]:checked::before {
+	background: var(--md-on-primary);
+	transform: translateX(18px);
+}
+
+.settings-option input[type="checkbox"]:focus-visible,
+.settings-color-field select:focus-visible {
+	outline: 3px solid var(--md-primary);
+	outline-offset: 2px;
+}
+
+.settings-action {
+	width: 100%;
+	min-height: 40px;
+	margin-top: 8px;
+	padding: 8px 12px;
+	border: 1px solid var(--md-outline-variant);
+	border-radius: var(--md-radius-large);
+	background: var(--md-secondary-container);
+	color: var(--md-on-secondary-container);
+	font: inherit;
+	text-align: center;
+	cursor: pointer;
+	transition: background-color var(--md-motion), color var(--md-motion), transform var(--md-motion);
+}
+
+.settings-action:hover {
+	background: var(--md-primary);
+	color: var(--md-on-primary);
+}
+
+.settings-about-card {
+	grid-column: 1 / -1;
 }
 
 #about-modal .telegram-modal__dialog,
@@ -921,8 +1053,8 @@ hr {
 
 .warning-modal__close:hover,
 .warning-modal__close:focus-visible {
-        background: #cba6f7;
-        color: #1e1e2e;
+        background: var(--md-primary);
+        color: var(--md-on-primary);
 }
 
 .warning-modal__close:hover {
@@ -990,8 +1122,8 @@ hr {
 .inspect-modal__link:focus-visible,
 .inspect-modal__copy:hover,
 .inspect-modal__copy:focus-visible {
-        background: #cba6f7;
-        color: #1e1e2e;
+        background: var(--md-primary);
+        color: var(--md-on-primary);
 }
 
 .inspect-modal__link:hover,
@@ -1033,7 +1165,7 @@ hr {
 }
 
 .telegram-modal__close:hover {
-        background: #cba6f7;
+        background: var(--md-primary);
         transform: rotate(90deg);
 }
 
@@ -1088,9 +1220,42 @@ hr {
                 padding: 24px 18px;
         }
 
+        .settings-grid {
+                grid-template-columns: 1fr;
+        }
+
+        .settings-about-card {
+                grid-column: auto;
+        }
+
         .experience-columns {
                 grid-template-columns: 1fr;
         }
+}
+
+html.is-compact body {
+        padding: clamp(12px, 2vw, 28px);
+}
+
+html.is-compact .layout,
+html.is-compact .layout-left,
+html.is-compact .layout-right {
+        gap: 12px;
+}
+
+html.is-compact .layout-left > section,
+html.is-compact .layout-right > section,
+html.is-compact #nixwebring {
+        padding: 18px;
+}
+
+html.is-compact section ul {
+        gap: 8px;
+}
+
+html.hide-section-controls .section-controls,
+html.hide-section-controls .section-resize-handle {
+        display: none !important;
 }
 
 @media (max-width: 380px) {
