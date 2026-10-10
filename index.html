@@ -1,27 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="mocha" data-anim="enabled">
 	<head>
 		<meta charset="UTF-8"/>
-   		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<title>dimunyx</title>
 		<link rel="icon" type="image/png" href="assets/logo.png"/>
-   		<link rel="stylesheet" href="style.css"/>
-   		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+		<link rel="stylesheet" href="style.css"/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 	</head>
 	<body>
-		<button id="settings-site" class="help-site settings-site" type="button" aria-label="Settings" title="Settings">
-			<img src="assets/settings.png" alt=""/>
-		</button>
-		<button id="help-site" class="help-site" type="button" aria-label="Help" title="Help">
-			<img src="assets/help.png" alt=""/>
-		</button>
-		<button id="reset-site" class="reset-site" type="button" aria-label="Reload site" title="Reload site">
-			<img src="assets/reload.png" alt=""/>
-			<svg class="reset-site__fallback" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.93 9h-2.02A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z"/></svg>
-		</button>
-		<button id="exit-site" class="help-site exit-site" type="button" aria-label="Exit" title="Exit">
-			<img src="assets/exit.png" alt=""/>
-		</button>
 		<div id="desktop-context-menu" class="desktop-context-menu" role="menu" aria-label="Desktop menu" hidden>
 			<button id="open-context-target" class="desktop-context-menu__item" type="button" role="menuitem" hidden>
 				<img src="assets/open.png" alt="" aria-hidden="true"/>
@@ -52,57 +39,42 @@
 			</a>
 		</div>
 		<div class="layout">
-			<div class="layout-left">
+			<div class="layout-left" id="layout-left">
 				<div class="site-header"> <img src="assets/logo.png" alt=""/>
 					<h1>dimunyx</h1>
 				</div>
-				<section>
+				<section data-section="about">
 					<h2>About Me</h2>
-					<button class="about-trigger" type="button" aria-haspopup="dialog">
+					<button class="about-trigger about-main-trigger" type="button" aria-haspopup="dialog">
 						<span class="about-trigger__hint">Click me!</span>
 					</button>
 				</section>
-				<section>
+				<section data-section="using-now">
 					<h2>Using now</h2>
 					<button class="about-trigger using-now-trigger" type="button" aria-haspopup="dialog">
 						<span class="about-trigger__hint">Click me!</span>
 					</button>
 				</section>
-				<section>
+				<section data-section="interests">
 					<h2>Interests</h2>
 					<button class="about-trigger interests-trigger" type="button" aria-haspopup="dialog">
 						<span class="about-trigger__hint">Click me!</span>
 					</button>
 				</section>
-				<section>
+				<section data-section="experience">
 					<h2>Experience</h2>
 					<button class="about-trigger experience-trigger" type="button" aria-haspopup="dialog">
 						<span class="about-trigger__hint">Click me!</span>
 					</button>
 				</section>
-				<section>
+				<section data-section="social">
 					<h2>Social</h2>
 					<button class="about-trigger social-trigger" type="button" aria-haspopup="dialog">
 						<span class="about-trigger__hint">Click me!</span>
 					</button>
 				</section>
-				<section>
-					<h2>Repos</h2>
-					<button class="about-trigger repos-trigger" type="button" aria-haspopup="dialog">
-						<span class="about-trigger__hint">Click me!</span>
-					</button>
-				</section>
 			</div>
-			<div class="layout-right">
-				<section>
-					<h2>GitHub Stats</h2>
-					<div class="github-stats">
-						<a href="https://awesome-github-stats.azurewebsites.net/index.html??cardType=level-alternate&theme=material-palenight&fontFamily=Maple%20Mono&preferLogin=false">
-							<img alt="dimunyx's GitHub Stats" src="https://awesome-github-stats.azurewebsites.net/user-stats/dimunyx?cardType=level-alternate&theme=material-palenight&fontFamily=Maple%20Mono&preferLogin=false" />
-						</a>
-					</div>
-				</section>
-			</div>
+			<div class="layout-right" id="layout-right"></div>
 		</div>
 		<div id="telegram-modal" class="telegram-modal" hidden aria-hidden="true">
 			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="telegram-modal-title" tabindex="-1">
@@ -179,18 +151,6 @@
 				</ul>
 			</div>
 		</div>
-		<div id="repos-modal" class="telegram-modal" hidden aria-hidden="true">
-			<div class="telegram-modal__dialog links-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="repos-modal-title" tabindex="-1">
-				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
-				<h2 id="repos-modal-title">Repos</h2>
-				<ul class="repository-links links-modal__list">
-					<li><a href="https://github.com/dimunyx/dimunyx.github.io"><i class="fab fa-github"></i>Website</a></li>
-					<li><a href="https://github.com/dimunyx/dimfetch"><i class="fab fa-github"></i>Fetch</a></li>
-					<li><a href="https://github.com/dimunyx/NixOS-dotfiles"><i class="fab fa-github"></i>Nix dots</a></li>
-					<li><a href="https://github.com/dimunyx/NixOS-configuration"><i class="fab fa-github"></i>Nix conf</a></li>
-				</ul>
-			</div>
-		</div>
 		<div id="inspect-modal" class="telegram-modal" hidden aria-hidden="true">
 			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="inspect-modal-title" tabindex="-1">
 				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
@@ -211,17 +171,35 @@
 				<div class="settings-grid">
 					<section class="settings-card">
 						<h3>Appearance</h3>
+						<label class="settings-color-field" for="settings-theme">
+							<span>Theme</span>
+							<select id="settings-theme">
+								<option value="mocha">Catppuccin Mocha</option>
+								<option value="macchiato">Catppuccin Macchiato</option>
+								<option value="frappe">Catppuccin Frappe</option>
+								<option value="latte">Catppuccin Latte</option>
+								<option value="gruvbox">Gruvbox</option>
+								<option value="ayu">Ayu</option>
+								<option value="adwaita">ADW</option>
+								<option value="kanagawa">Kanagawa</option>
+								<option value="eldritch">Eldritch</option>
+								<option value="tokyo-night">Tokyo Night</option>
+								<option value="nord">Nord</option>
+								<option value="rose-pine">Rosé Pine</option>
+								<option value="dracula">Dracula</option>
+							</select>
+						</label>
 						<label class="settings-color-field" for="settings-accent">
 							<span>Primary color</span>
 							<select id="settings-accent">
-								<option value="#89b4fa">Blue</option>
-								<option value="#cba6f7">Purple</option>
-								<option value="#a6e3a1">Green</option>
-								<option value="#fab387">Peach</option>
-								<option value="#f38ba8">Red</option>
-								<option value="#f9e2af">Yellow</option>
-								<option value="#11111b">Black</option>
-								<option value="#ffffff">White</option>
+								<option value="blue">Blue</option>
+								<option value="purple">Purple</option>
+								<option value="green">Green</option>
+								<option value="peach">Peach</option>
+								<option value="red">Red</option>
+								<option value="yellow">Yellow</option>
+								<option value="black">Black</option>
+								<option value="white">White</option>
 								<option value="custom">Custom</option>
 							</select>
 						</label>
@@ -232,7 +210,8 @@
 						<button class="settings-action" id="settings-reset-appearance" type="button">Reset appearance</button>
 					</section>
 					<section class="settings-card">
-						<h3>Layout</h3>
+						<h3>Layout &amp; behavior</h3>
+						<label class="settings-option"><span>Window move effects</span><input id="settings-window-effects" type="checkbox"></label>
 						<label class="settings-option"><span>Compact mode</span><input id="settings-compact" type="checkbox"></label>
 						<label class="settings-option"><span>Show section controls</span><input id="settings-controls" type="checkbox"></label>
 						<button class="settings-action" id="settings-default-layout" type="button">Restore default layout</button>
@@ -243,7 +222,26 @@
 						<p>Sections: <span id="settings-tiled-count">0</span> tiled, <span id="settings-floating-count">0</span> floating</p>
 						<p>dimunyx.github.io</p>
 						<p>This site is still under development.</p>
+						<button class="settings-action" id="settings-reset-all" type="button">Reset all settings</button>
 					</section>
+				</div>
+			</div>
+		</div>
+		<div id="terminal-modal" class="telegram-modal terminal-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog terminal-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="terminal-modal-title" tabindex="-1">
+				<div class="terminal">
+					<div class="terminal__bar" id="terminal-bar">
+						<span class="terminal__title" id="terminal-modal-title">dimunyx@site:~</span>
+						<button class="telegram-modal__close terminal__close" type="button" aria-label="Close terminal"><img src="assets/close.png" alt=""/></button>
+					</div>
+					<div class="terminal__body" id="terminal-screen" role="log" aria-live="polite" aria-label="Terminal output" tabindex="0">
+						<div class="terminal__output" id="terminal-output"></div>
+						<form class="terminal__form" id="terminal-form" autocomplete="off">
+							<label class="terminal__prompt" for="terminal-input">dimunyx@site:~$</label>
+							<input id="terminal-input" class="terminal__input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Terminal command">
+						</form>
+					</div>
+					<div class="terminal__resize" id="terminal-resize" title="Resize"></div>
 				</div>
 			</div>
 		</div>
@@ -257,7 +255,9 @@
 					<li>Material Design 3 based site.</li>
 					<li>Made by dimunyx based on copyleft :)</li>
 					<li>Reload button on the right.</li>
-					<li>Has floating & semi-tiling layouts.</li>
+					<li>Has floating &amp; semi-tiling layouts.</li>
+					<li>Workspaces: <code>Ctrl+1…3</code>, terminal: <code>Ctrl+`</code>.</li>
+					<li>Drag a section by its handle; on touch devices use the handle too.</li>
 				</ol>
 			</div>
 		</div>
@@ -278,6 +278,15 @@
 				<p>Material Design 3 based site.</p>
 			</div>
 		</div>
+		<div id="exit-modal" class="telegram-modal" hidden aria-hidden="true">
+			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="exit-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
+				<h2 id="exit-modal-title">Leave site</h2>
+				<p>Your browser blocked closing this tab, because it was opened by hand.</p>
+				<p>Use <code>Ctrl+W</code> (<code>Cmd+W</code> on macOS) or close the tab from the browser interface.</p>
+				<button class="warning-modal__close" type="button">Got it</button>
+			</div>
+		</div>
 		<div id="using-now-modal" class="telegram-modal" hidden aria-hidden="true">
 			<div class="telegram-modal__dialog using-now-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="using-now-modal-title" tabindex="-1">
 				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.png" alt=""/></button>
@@ -286,33 +295,118 @@
           ▜███▙       ▜███▙  ▟███▛             NixOS 26.11 (Zokor)
            ▜███▙       ▜███▙▟███▛              AMD Ryzen 5 5500U (6/12)
             ▜███▙       ▜██████▛               AMD Lucienne [Integrated]
-     ▟█████████████████▙ ▜████▛     ▟▙         4.78 GiB / 7.10 GiB (67%)
-    ▟███████████████████▙ ▜███▙    ▟██▙        44.56 GiB / 451.71 GiB (10%)
-           ▄▄▄▄▖           ▜███▙  ▟███▛        100% (AC Connected)
-          ▟███▛             ▜██▛ ▟███▛         Linux 7.2.7-cachyos
-         ▟███▛               ▜▛ ▟███▛          ╰────────────────────────────────────╯
-▟███████████▛                  ▟██████████▙    ╭──────────────Software──────────────╮
-▜██████████▛                  ▟███████████▛    umbriel (Wayland)
-      ▟███▛ ▟▙               ▟███▛             fish 4.9.3
-     ▟███▛ ▟██▙             ▟███▛              greetd
-    ▟███▛  ▜███▙           ▝▀▀▀▀               kitty 0.49.0
-    ▜██▛    ▜███▙ ▜██████████████████▛         Maple Mono NF ExtraBold (14pt)
-     ▜▛     ▟████▙ ▜████████████████▛          Papirus-Dark [GTK2/3/4]
-           ▟██████▙         ▜███▙              1432 (nix), 20 (flatpak)
-          ▟███▛▜███▙         ▜███▙             57 mins
-         ▟███▛  ▜███▙         ▜███▙            37 days / 365 days [Alive]
-         ▝▀▀▀    ▀▀▀▀▘         ▀▀▀▘            ╰────────────────────────────────────╯</pre>
+     ▟█████████████████▙ ▜████▛     ▟▙         100% (AC Connected)
+    ▟███████████████████▙ ▜███▙    ▟██▙        Linux 7.2.9-cachyos
+           ▄▄▄▄▖           ▜███▙  ▟███▛        ╰────────────────────────────────────╯
+          ▟███▛             ▜██▛ ▟███▛         ╭──────────────Software──────────────╮
+         ▟███▛               ▜▛ ▟███▛          umbriel (Wayland)
+▟███████████▛                  ▟██████████▙    fish 4.9.3
+▜██████████▛                  ▟███████████▛    greetd
+      ▟███▛ ▟▙               ▟███▛             kitty 0.49.0
+     ▟███▛ ▟██▙             ▟███▛              Maple Mono NF ExtraBold (14pt)
+    ▟███▛  ▜███▙           ▝▀▀▀▀               Papirus-Dark [GTK2/3/4]
+    ▜██▛    ▜███▙ ▜██████████████████▛         1432 (nix), 20 (flatpak)
+     ▜▛     ▟████▙ ▜████████████████▛          57 mins
+           ▟██████▙         ▜███▙              51 days / 365 days [Alive]
+          ▟███▛▜███▙         ▜███▙             ╰────────────────────────────────────╯
+         ▟███▛  ▜███▙         ▜███▙            
+         ▝▀▀▀    ▀▀▀▀▘         ▀▀▀▘            </pre>
 			</div>
 		</div>
-		<section id="nixwebring">
-			<h2>Nixwebring</h2>
-			<div class="webring">
-				<a href="https://nixwebr.ing/prev/dimunyx">◀ Previous</a>
-				<a href="https://nixwebr.ing"> Nix Webring</a>
-				<a href="https://nixwebr.ing/rand"> Random</a>
-				<a href="https://nixwebr.ing/next/dimunyx">Next ▶</a>
+		<div id="page-container" class="page-container">
+			<section id="nixwebring" data-section="nixwebring">
+				<h2>Nixwebring</h2>
+				<div class="webring">
+					<a href="https://nixwebr.ing/prev/dimunyx"><img src="assets/previous.png" alt="Previous"></a>
+					<a href="https://nixwebr.ing"><img src="assets/nixwebring.png" alt="Nix Webring"></a>
+					<a href="https://nixwebr.ing/rand"><img src="assets/random.png" alt="Random"></a>
+					<a href="https://nixwebr.ing/next/dimunyx"><img src="assets/next.png" alt="Next"></a>
+				</div>
+			</section>
+		</div>
+		<div id="section-store" hidden>
+			<section data-section="projects">
+				<h2>Repositories</h2>
+				<div class="project-explorer">
+					<div class="project-explorer__toolbar">
+						<label class="project-explorer__field" for="project-search">
+							<span class="visually-hidden">Search repositories</span>
+							<input id="project-search" type="search" placeholder="Search repositories…" autocomplete="off" spellcheck="false">
+						</label>
+						<label class="project-explorer__field project-explorer__field--sort" for="project-sort">
+							<span class="visually-hidden">Sort projects</span>
+							<select id="project-sort">
+								<option value="name-asc">Name A→Z</option>
+								<option value="name-desc">Name Z→A</option>
+								<option value="category">Category</option>
+								<option value="updated" id="project-sort-updated" hidden>Recently updated</option>
+							</select>
+						</label>
+					</div>
+					<div class="project-explorer__filters" id="project-filters" role="group" aria-label="Filter projects by category"></div>
+					<p class="project-explorer__status" id="project-status" hidden></p>
+					<div class="project-explorer__grid" id="project-grid"></div>
+					<div class="project-explorer__empty" id="project-empty" hidden>
+						<button class="settings-action" id="project-clear-filters" type="button">Clear filters</button>
+					</div>
+				</div>
+			</section>
+			<section data-section="palette">
+				<h2>Palette</h2>
+				<p>Switch the Catppuccin flavour. The accent colour follows the theme.</p>
+				<div class="palette-list" id="palette-list" role="group" aria-label="Colour themes"></div>
+			</section>
+		</div>
+		<footer class="status-bar" id="status-bar">
+			<div class="status-bar__group">
+				<div class="workspace-switcher" id="workspace-switcher" role="group" aria-label="Workspaces">
+					<button class="workspace-switcher__btn" type="button" data-workspace="main" aria-pressed="true" title="Main"><kbd>1</kbd></button>
+					<button class="workspace-switcher__btn" type="button" data-workspace="projects" aria-pressed="false" title="Projects"><kbd>2</kbd></button>
+					<button class="workspace-switcher__btn" type="button" data-workspace="design" aria-pressed="false" title="Design"><kbd>3</kbd></button>
+				</div>
 			</div>
-		</section>
+			<div class="status-bar__group status-bar__right">
+				<button class="status-bar__btn" id="status-terminal" type="button" aria-label="Open terminal" title="Terminal (Ctrl + `)">
+					<img src="assets/terminal.png" alt="" aria-hidden="true">
+				</button>
+				<button class="status-bar__clock" id="status-clock" type="button" title="Local time">
+					<img src="assets/clock.png" alt="" aria-hidden="true">
+					<span class="status-bar__item status-bar__time" id="status-time"></span>
+				</button>
+				<button class="status-bar__btn" id="status-actions" type="button" aria-label="Site actions" aria-haspopup="menu" aria-expanded="false">
+					<img src="assets/menu.png" alt="" aria-hidden="true">
+				</button>
+			</div>
+		</footer>
+		<div class="desktop-context-menu actions-menu" id="actions-menu" role="menu" aria-label="Site actions" hidden>
+			<button class="desktop-context-menu__item" id="actions-settings" type="button" role="menuitem">
+				<img src="assets/settings.png" alt="" aria-hidden="true"/><span>Settings</span>
+			</button>
+			<button class="desktop-context-menu__item" id="actions-help" type="button" role="menuitem">
+				<img src="assets/help.png" alt="" aria-hidden="true"/><span>Help</span>
+			</button>
+			<button class="desktop-context-menu__item" id="actions-reload" type="button" role="menuitem">
+				<img src="assets/reload.png" alt="" aria-hidden="true"/><span>Reload</span>
+			</button>
+			<button class="desktop-context-menu__item" id="actions-exit" type="button" role="menuitem">
+				<img src="assets/exit.png" alt="" aria-hidden="true"/><span>Exit</span>
+			</button>
+		</div>
+		<div class="desktop-context-menu clock-menu" id="clock-menu" role="menu" aria-label="Session info" hidden>
+			<div class="clock-menu__row" role="menuitem"><span>USER</span><span id="clock-menu-user">dimunyx</span></div>
+			<div class="clock-menu__row" role="menuitem"><span>DATE</span><span id="clock-menu-date"></span></div>
+			<div class="clock-menu__row" role="menuitem"><span>VERSION</span><span id="clock-menu-version">v…</span></div>
+		</div>
+		<script src="js/core.js" defer></script>
+		<script src="js/select.js" defer></script>
+		<script src="js/modals.js" defer></script>
+		<script src="js/menus.js" defer></script>
+		<script src="js/layout.js" defer></script>
+		<script src="js/workspaces.js" defer></script>
+		<script src="js/settings.js" defer></script>
+		<script src="js/projects.js" defer></script>
+		<script src="js/terminal.js" defer></script>
+		<script src="js/statusbar.js" defer></script>
 		<script src="index.js" defer></script>
 	</body>
 </html>
