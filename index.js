@@ -10,37 +10,65 @@
 		const menu = element("actions-menu");
 		if (!trigger || !menu) return;
 
+		let closeTimer = null;
+
+		const finishClose = () => {
+			closeTimer = null;
+			menu.classList.remove("is-closing");
+			menu.hidden = true;
+		};
+
 		const closeMenu = (restoreFocus = true) => {
 			if (menu.hidden) return;
+			window.clearTimeout(closeTimer);
+			menu.classList.remove("is-closing");
 			menu.hidden = true;
 			trigger.setAttribute("aria-expanded", "false");
+			trigger.classList.remove("is-open");
 			if (restoreFocus) trigger.focus();
 		};
 
 		const openMenu = () => {
+			window.clearTimeout(closeTimer);
+			menu.classList.remove("is-closing");
 			const rect = trigger.getBoundingClientRect();
 			menu.hidden = false;
 			menu.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - menu.offsetWidth - 8))}px`;
 			menu.style.top = `${Math.max(8, rect.top - menu.offsetHeight - 8)}px`;
 			trigger.setAttribute("aria-expanded", "true");
+			trigger.classList.add("is-open");
+		};
+
+		const animateClose = (restoreFocus = true) => {
+			if (menu.hidden) return;
+			trigger.setAttribute("aria-expanded", "false");
+			trigger.classList.remove("is-open");
+			if (restoreFocus) trigger.focus();
+			if (!DX.motion.allowed()) {
+				finishClose();
+				return;
+			}
+			window.clearTimeout(closeTimer);
+			menu.classList.add("is-closing");
+			closeTimer = window.setTimeout(finishClose, DX.motion.duration("menu"));
 		};
 
 		trigger.addEventListener("click", () => {
 			if (menu.hidden) openMenu();
-			else closeMenu();
+			else animateClose();
 		});
 
 		document.addEventListener("pointerdown", (event) => {
-			if (menu.hidden) return;
+			if (menu.hidden || menu.classList.contains("is-closing")) return;
 			if (menu.contains(event.target) || trigger.contains(event.target)) return;
-			closeMenu(false);
+			animateClose(false);
 		});
 
 		DX.esc.push({
 			id: "actions-menu",
 			isActive: () => !menu.hidden,
 			close: () => {
-				closeMenu();
+				animateClose();
 				return true;
 			},
 		});
@@ -65,6 +93,16 @@
 			window.setTimeout(() => {
 				if (!window.closed) DX.modals.open("exit-modal", { returnFocus: trigger });
 			}, 150);
+		});
+	}
+
+	function wireHero() {
+		element("hero-explore")?.addEventListener("click", () => {
+			DX.workspaces.switchTo("projects");
+		});
+
+		element("hero-devlog")?.addEventListener("click", () => {
+			DX.devlog.goTo();
 		});
 	}
 
@@ -107,9 +145,12 @@
 		safe("selects", () => DX.select.init());
 		safe("settings UI", () => DX.initSettings());
 		safe("projects", () => DX.projects.init());
+		safe("devlog", () => DX.devlog.init());
 		safe("terminal", () => DX.terminal.init());
 		safe("status bar", () => DX.statusbar.init());
+		safe("hero", wireHero);
 		safe("actions menu", wireActionsMenu);
+		safe("router", () => DX.router.init());
 		loadVersion();
 	}
 

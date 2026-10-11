@@ -522,7 +522,7 @@
 		handle.draggable = true;
 		handle.setAttribute("aria-label", "Move section");
 		handle.title = "Drag to move, right click for layout";
-		handle.innerHTML = '<img class="section-drag-handle__icon" src="assets/drag.png" alt="" aria-hidden="true">';
+		handle.innerHTML = '<img class="section-drag-handle__icon" src="assets/drag.svg" alt="" aria-hidden="true">';
 		controls.append(handle);
 		floatingHandles.set(section, handle);
 
@@ -553,7 +553,7 @@
 		resize.draggable = false;
 		resize.setAttribute("aria-label", "Resize section");
 		resize.title = "Resize section";
-		resize.innerHTML = '<img src="assets/resize.png" alt="" aria-hidden="true">';
+		resize.innerHTML = '<img src="assets/resize.svg" alt="" aria-hidden="true">';
 		section.append(resize);
 		resizeHandles.set(section, resize);
 

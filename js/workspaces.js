@@ -8,8 +8,8 @@
 		{
 			id: "main",
 			label: "Main",
-			sections: ["about", "using-now", "interests", "experience", "social", "nixwebring"],
-			default: { left: ["about", "using-now", "interests", "experience", "social"], right: [], page: ["nixwebring"] },
+			sections: ["about", "using-now", "interests", "experience", "social", "devlog", "nixwebring"],
+			default: { left: ["about", "using-now", "interests", "experience", "social"], right: [], page: ["devlog", "nixwebring"] },
 		},
 		{
 			id: "projects",
@@ -42,6 +42,7 @@
 		const workspace = byId(id);
 		if (!workspace) return false;
 		activeId = workspace.id;
+		document.body.dataset.workspace = activeId;
 		syncSwitcher();
 		DX.events.emit("workspace-changed", { workspace: workspace.id, label: workspace.label, ...DX.layout.counts() });
 		if (options.notify !== false) return true;
@@ -101,6 +102,7 @@
 
 		activeId = DX.layout.activeWorkspace();
 		if (!byId(activeId)) activeId = "main";
+		document.body.dataset.workspace = activeId;
 		syncSwitcher();
 	}
 

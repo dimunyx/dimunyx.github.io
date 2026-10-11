@@ -14,6 +14,7 @@
 		[".experience-trigger", "experience-modal"],
 		[".social-trigger", "social-modal"],
 		["#site-info-menu-item", "site-info-modal"],
+		[".devlog-trigger", "devlog-modal"],
 	];
 
 	function wireCloseButtons() {
