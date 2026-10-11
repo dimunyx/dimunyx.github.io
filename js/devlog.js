@@ -15,6 +15,20 @@
 	   repository — nothing here is invented. */
 	const ENTRIES = [
 		{
+			id: "v031-hero-devlog",
+			date: "2026-10-11",
+			title: "v0.3.1 — hero, devlog and deep links",
+			category: "Website",
+			kind: "major",
+			description: "The site got a proper front page, a changelog and shareable URLs.",
+			changes: [
+				"Replaced the site header with a glowing hero: logo, title, Explore Projects and Devlog actions",
+				"Added this devlog — a changelog timeline built from the repository history, opened as a popup",
+				"URLs now mirror the workspace: /main/, /projects/, /design/terminal, with deep links handed over by 404.html",
+				"Every UI icon migrated from PNG to crisp Material Symbols SVG",
+			],
+		},
+		{
 			id: "v030-desktop",
 			date: "2026-10-10",
 			title: "v0.3.0 — the desktop rebuild",
