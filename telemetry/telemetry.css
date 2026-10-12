@@ -1,0 +1,266 @@
+/* Telemetry page: reuses the main site's MD3 tokens from ../style.css. */
+.tele-topbar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: min(920px, 100%);
+        margin: 0 auto 16px;
+}
+
+.tele-topbar__logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+}
+
+.tele-topbar__title {
+        flex: 1 1 auto;
+        margin: 0;
+        font-size: 1.5rem;
+}
+
+.tele-topbar__back {
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: var(--md-secondary-container);
+        color: var(--md-on-secondary-container);
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: background-color var(--md-motion), color var(--md-motion);
+}
+
+.tele-topbar__back:hover,
+.tele-topbar__back:focus-visible {
+        background: var(--md-primary);
+        color: var(--md-on-primary);
+}
+
+.tele-main {
+        display: grid;
+        gap: 14px;
+        width: min(920px, 100%);
+        margin: 0 auto;
+}
+
+.tele-card {
+        padding: 20px;
+        border: 1px solid var(--md-outline-variant);
+        border-radius: var(--md-radius-large, 28px);
+        background: var(--md-surface-container-high);
+}
+
+.tele-card h2 {
+        margin: 0 0 12px;
+        font-size: 1.05rem;
+}
+
+.tele-card a {
+        color: var(--md-primary);
+}
+
+.tele-note,
+.tele-empty,
+.tele-loading {
+        color: var(--md-on-surface-variant);
+        font-size: 0.85rem;
+}
+
+.tele-error {
+        margin: 10px 0 0;
+        color: var(--md-error, #f38ba8);
+        font-size: 0.9rem;
+}
+
+.tele-connect {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+}
+
+.tele-connect input {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 10px 16px;
+        border: 1px solid var(--md-outline-variant);
+        border-radius: 999px;
+        background: var(--md-surface);
+        color: var(--md-on-surface);
+        font: inherit;
+        font-size: 0.9rem;
+}
+
+.tele-connect input:focus-visible {
+        outline: 2px solid var(--md-primary);
+        outline-offset: 1px;
+}
+
+.tele-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 999px;
+        background: var(--md-primary);
+        color: var(--md-on-primary);
+        font: inherit;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: filter var(--md-motion), background-color var(--md-motion), color var(--md-motion);
+}
+
+.tele-btn:hover,
+.tele-btn:focus-visible {
+        filter: brightness(1.08);
+}
+
+.tele-btn--tonal {
+        background: var(--md-secondary-container);
+        color: var(--md-on-secondary-container);
+}
+
+.tele-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+}
+
+.tele-period {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--md-on-surface-variant);
+        font-size: 0.9rem;
+}
+
+.tele-period select {
+        padding: 8px 14px;
+        border: 1px solid var(--md-outline-variant);
+        border-radius: 999px;
+        background: var(--md-surface);
+        color: var(--md-on-surface);
+        font: inherit;
+        font-size: 0.9rem;
+}
+
+.tele-kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+}
+
+.tele-kpi {
+        display: grid;
+        gap: 4px;
+        padding: 16px 18px;
+}
+
+.tele-kpi__label {
+        color: var(--md-on-surface-variant);
+        font-size: 0.8rem;
+}
+
+.tele-kpi__value {
+        font-size: 1.6rem;
+        font-weight: 600;
+}
+
+.tele-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        min-height: 160px;
+        padding-top: 8px;
+}
+
+.tele-chart__bar {
+        flex: 1 1 0;
+        min-width: 0;
+        border-radius: 6px 6px 2px 2px;
+        background: var(--md-primary);
+        transition: filter var(--md-motion);
+}
+
+.tele-chart__bar:hover {
+        filter: brightness(1.15);
+}
+
+.tele-chart__bar--empty {
+        background: var(--md-surface-container-highest, var(--md-surface-container));
+        min-height: 3px;
+}
+
+.tele-list {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: tele-rank;
+}
+
+.tele-list__row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+}
+
+.tele-list__name {
+        flex: 0 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        color: var(--md-on-surface);
+        font-size: 0.9rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+}
+
+.tele-list__bar {
+        flex: 1 1 auto;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--md-surface-container-highest, var(--md-surface-container));
+        overflow: hidden;
+}
+
+.tele-list__bar-fill {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--md-primary);
+}
+
+.tele-list__count {
+        flex: 0 0 auto;
+        min-width: 2.5em;
+        color: var(--md-on-surface-variant);
+        font-size: 0.85rem;
+        text-align: right;
+}
+
+.tele-list--likes .tele-list__name {
+        flex: 1 1 auto;
+}
+
+.tele-like-stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--md-on-surface-variant);
+        font-size: 0.85rem;
+}
+
+.tele-like-stat--up.is-active {
+        color: var(--md-primary);
+}
+
+.tele-like-stat--down.is-active {
+        color: var(--md-error, #f38ba8);
+}
+
+@media (max-width: 560px) {
+        .tele-connect {
+                flex-direction: column;
+        }
+}

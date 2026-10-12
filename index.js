@@ -132,10 +132,23 @@
 			fn();
 		} catch (error) {
 			console.error(`[dimunyx] ${name} failed to start`, error);
+			DX.telemetry?.report("error/boot", `${name}: ${error?.message || error}`);
 		}
 	}
 
+	function wireTelemetryShortcut() {
+		document.addEventListener("keydown", (event) => {
+			if (event.defaultPrevented) return;
+			if (!event.ctrlKey || !event.altKey) return;
+			if (event.code !== "KeyT" && event.key.toLowerCase() !== "t") return;
+			if (DX.util.isEditableTarget(event.target)) return;
+			event.preventDefault();
+			window.location.href = "/telemetry/";
+		});
+	}
+
 	function boot() {
+		safe("telemetry", () => DX.telemetry.init());
 		safe("settings", () => DX.settings.apply());
 		safe("layout", () => DX.layout.init());
 		safe("workspaces", () => DX.workspaces.init());
@@ -150,6 +163,7 @@
 		safe("status bar", () => DX.statusbar.init());
 		safe("hero", wireHero);
 		safe("actions menu", wireActionsMenu);
+		safe("telemetry shortcut", wireTelemetryShortcut);
 		safe("router", () => DX.router.init());
 		loadVersion();
 	}

@@ -7,6 +7,10 @@
 		<link rel="icon" type="image/png" href="assets/logo.png"/>
 		<link rel="stylesheet" href="style.css"/>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+		<!-- GoatCounter analytics -->
+		<script data-goatcounter="https://dimunyx.goatcounter.com/count"
+			data-goatcounter-settings='{"no_onload":true,"allow_local":true}'
+			async src="https://gc.zgo.at/count.js"></script>
 	</head>
 	<body data-workspace="main">
 		<div id="desktop-context-menu" class="desktop-context-menu" role="menu" aria-label="Desktop menu" hidden>
@@ -264,6 +268,7 @@
 					<li>Reload button on the right.</li>
 					<li>Has floating &amp; semi-tiling layouts.</li>
 					<li>Workspaces: <code>Ctrl+1…3</code>, terminal: <code>Ctrl+`</code>.</li>
+					<li>Telemetry dashboard: <code>Ctrl+Alt+T</code> or <a href="/telemetry/">/telemetry/</a>.</li>
 					<li>The URL mirrors the workspace: <code>/main/</code>, <code>/projects/</code>, <code>/design/terminal</code>.</li>
 					<li>Drag a section by its handle; on touch devices use the handle too.</li>
 				</ol>
@@ -437,6 +442,7 @@
 		<script src="js/terminal.js" defer></script>
 		<script src="js/statusbar.js" defer></script>
 		<script src="js/router.js" defer></script>
+		<script src="js/telemetry.js" defer></script>
 		<script src="index.js" defer></script>
 	</body>
 </html>

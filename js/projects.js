@@ -102,6 +102,55 @@
 	const LIVE_CACHE_KEY = "dimunyx-repo-stats-v1";
 	const LIVE_CACHE_TTL = 10 * 60 * 1000;
 
+	/* Permanent per-repo likes/dislikes: never touched by the boot purge. */
+	const REACTIONS_KEY = "dimunyx-reactions-v1";
+
+	function loadReactions() {
+		try {
+			const parsed = JSON.parse(localStorage.getItem(REACTIONS_KEY));
+			return parsed && typeof parsed === "object" ? parsed : {};
+		} catch (error) {
+			return {};
+		}
+	}
+
+	function saveReactions(map) {
+		try {
+			localStorage.setItem(REACTIONS_KEY, JSON.stringify(map));
+		} catch (error) {
+			/* private mode: likes then live for the session only */
+		}
+	}
+
+	function reactionEntry(name, map = loadReactions()) {
+		const entry = map[name];
+		if (entry && typeof entry === "object") {
+			return {
+				reaction: entry.reaction === "like" || entry.reaction === "dislike" ? entry.reaction : null,
+				likes: Number(entry.likes) || 0,
+				dislikes: Number(entry.dislikes) || 0,
+			};
+		}
+		return { reaction: null, likes: 0, dislikes: 0 };
+	}
+
+	/* YouTube semantics: like removes dislike and vice versa, same click clears. */
+	function setReaction(name, next) {
+		const map = loadReactions();
+		const entry = reactionEntry(name, map);
+		const previous = entry.reaction;
+		if (previous === next) next = null;
+		if (previous === "like") entry.likes = Math.max(0, entry.likes - 1);
+		if (previous === "dislike") entry.dislikes = Math.max(0, entry.dislikes - 1);
+		if (next === "like") entry.likes += 1;
+		if (next === "dislike") entry.dislikes += 1;
+		entry.reaction = next;
+		map[name] = entry;
+		saveReactions(map);
+		DX.telemetry?.event(`${next || "none"}/${name}`, next ? `reacted: ${next}` : "reaction cleared");
+		return entry;
+	}
+
 	const state = {
 		query: "",
 		category: "all",
@@ -225,21 +274,60 @@
 		const actions = document.createElement("div");
 		actions.className = "project-card__actions";
 
-		const repoLink = document.createElement("a");
-		repoLink.href = project.url;
-		repoLink.target = "_blank";
-		repoLink.rel = "noopener noreferrer";
-		repoLink.textContent = "GitHub";
-
 		const openLink = document.createElement("a");
 		openLink.href = project.homepage || project.url;
 		openLink.target = "_blank";
 		openLink.rel = "noopener noreferrer";
-		openLink.textContent = project.homepage ? "Open ↗" : "Open repo ↗";
+		openLink.textContent = "Open ↗";
 
-		actions.append(repoLink, openLink);
+		actions.append(openLink);
 		card.append(actions);
+
+		card.append(buildReactions(project));
 		return card;
+	}
+
+	function buildReactions(project) {
+		const wrap = document.createElement("div");
+		wrap.className = "project-card__reactions";
+
+		const makeButton = (kind, icon, label) => {
+			const button = document.createElement("button");
+			button.type = "button";
+			button.className = `project-card__reaction project-card__reaction--${kind}`;
+			button.setAttribute("aria-label", label);
+			button.title = label;
+			button.setAttribute("aria-pressed", "false");
+			const glyph = document.createElement("i");
+			glyph.className = `fa-solid ${icon}`;
+			glyph.setAttribute("aria-hidden", "true");
+			const count = document.createElement("span");
+			count.className = "project-card__reaction-count";
+			count.textContent = "0";
+			button.append(glyph, count);
+			return { button, count };
+		};
+
+		const like = makeButton("like", "fa-thumbs-up", "Like");
+		const dislike = makeButton("dislike", "fa-thumbs-down", "Dislike");
+
+		const sync = (entry) => {
+			const liked = entry.reaction === "like";
+			const disliked = entry.reaction === "dislike";
+			like.button.classList.toggle("is-active", liked);
+			like.button.setAttribute("aria-pressed", String(liked));
+			dislike.button.classList.toggle("is-active", disliked);
+			dislike.button.setAttribute("aria-pressed", String(disliked));
+			like.count.textContent = String(entry.likes);
+			dislike.count.textContent = String(entry.dislikes);
+		};
+
+		like.button.addEventListener("click", () => sync(setReaction(project.name, "like")));
+		dislike.button.addEventListener("click", () => sync(setReaction(project.name, "dislike")));
+		sync(reactionEntry(project.name));
+
+		wrap.append(like.button, dislike.button);
+		return wrap;
 	}
 
 	function renderStatus() {

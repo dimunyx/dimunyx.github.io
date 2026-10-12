@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" data-theme="mocha" data-anim="enabled">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<title>Telemetry — dimunyx</title>
+		<link rel="icon" type="image/png" href="../assets/logo.png"/>
+		<link rel="stylesheet" href="../style.css"/>
+		<link rel="stylesheet" href="telemetry.css"/>
+	</head>
+	<body>
+		<header class="tele-topbar">
+			<img class="tele-topbar__logo" src="../assets/logo.png" alt=""/>
+			<h1 class="tele-topbar__title">Telemetry</h1>
+			<a class="tele-topbar__back" href="../">← Site</a>
+		</header>
+		<main class="tele-main">
+			<section id="tele-connect" class="tele-card" hidden>
+				<h2>Connect GoatCounter</h2>
+				<p>Open <a href="https://dimunyx.goatcounter.com/settings/api" target="_blank" rel="noopener noreferrer">dimunyx.goatcounter.com/settings/api</a>, press <b>Create new token</b> and paste it here.</p>
+				<p class="tele-note">The token is stored only in this browser (localStorage) and never leaves it except as requests to GoatCounter.</p>
+				<form id="tele-connect-form" class="tele-connect">
+					<input id="tele-token" type="password" placeholder="API token" autocomplete="off" spellcheck="false" required/>
+					<button class="tele-btn" type="submit">Connect</button>
+				</form>
+				<p id="tele-connect-error" class="tele-error" hidden></p>
+			</section>
+
+			<section id="tele-stats" hidden>
+				<div class="tele-toolbar">
+					<label class="tele-period">Period
+						<select id="tele-period">
+							<option value="7" selected>7 days</option>
+							<option value="30">30 days</option>
+							<option value="90">90 days</option>
+						</select>
+					</label>
+					<button id="tele-disconnect" class="tele-btn tele-btn--tonal" type="button">Disconnect</button>
+				</div>
+
+				<div class="tele-kpis">
+					<div class="tele-card tele-kpi">
+						<span class="tele-kpi__label">Visits</span>
+						<span id="kpi-visits" class="tele-kpi__value">–</span>
+					</div>
+					<div class="tele-card tele-kpi">
+						<span class="tele-kpi__label">Today</span>
+						<span id="kpi-today" class="tele-kpi__value">–</span>
+					</div>
+					<div class="tele-card tele-kpi">
+						<span class="tele-kpi__label">Reactions</span>
+						<span id="kpi-events" class="tele-kpi__value">–</span>
+					</div>
+					<div class="tele-card tele-kpi">
+						<span class="tele-kpi__label">Peak day</span>
+						<span id="kpi-peak" class="tele-kpi__value">–</span>
+					</div>
+				</div>
+
+				<div class="tele-card">
+					<h2>Views per day</h2>
+					<div id="tele-chart" class="tele-chart" role="img" aria-label="Daily view chart"></div>
+					<p id="tele-chart-empty" class="tele-empty" hidden>No views in this period.</p>
+				</div>
+
+				<div class="tele-card">
+					<h2>Top pages</h2>
+					<ol id="tele-pages" class="tele-list"></ol>
+					<p id="tele-pages-empty" class="tele-empty" hidden>Nothing yet.</p>
+				</div>
+
+				<div class="tele-card">
+					<h2>Repository likes</h2>
+					<ol id="tele-likes" class="tele-list tele-list--likes"></ol>
+					<p id="tele-likes-empty" class="tele-empty" hidden>No reactions yet — tap 👍 under a repo on the Projects page.</p>
+				</div>
+
+				<div class="tele-card">
+					<h2>Errors</h2>
+					<ol id="tele-errors" class="tele-list"></ol>
+					<p id="tele-errors-empty" class="tele-empty" hidden>No errors — nice.</p>
+				</div>
+			</section>
+
+			<p id="tele-loading" class="tele-loading" hidden>Loading stats…</p>
+			<p id="tele-fatal" class="tele-error" hidden></p>
+		</main>
+		<script src="app.js" defer></script>
+	</body>
+</html>

@@ -2371,6 +2371,42 @@ button:active {
         color: var(--md-on-primary);
 }
 
+.project-card__reactions {
+        display: flex;
+        gap: 8px;
+        margin-top: 2px;
+}
+
+.project-card__reaction {
+        display: inline-flex;
+        flex: 1 1 auto;
+        min-height: 36px;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border: 1px solid var(--md-outline-variant);
+        border-radius: 999px;
+        background: transparent;
+        color: var(--md-on-surface-variant);
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background-color var(--md-motion), color var(--md-motion), border-color var(--md-motion);
+}
+
+.project-card__reaction:hover,
+.project-card__reaction:focus-visible {
+        background: var(--md-secondary-container);
+        border-color: var(--md-secondary-container);
+        color: var(--md-on-secondary-container);
+}
+
+.project-card__reaction.is-active {
+        background: var(--md-primary);
+        border-color: var(--md-primary);
+        color: var(--md-on-primary);
+}
+
 .project-explorer__empty {
         display: grid;
         justify-items: center;

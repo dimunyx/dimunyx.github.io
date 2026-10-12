@@ -182,6 +182,7 @@
 				handler(detail);
 			} catch (error) {
 				console.error(`[dimunyx] listener for "${type}" failed`, error);
+				DX.telemetry?.report("error/listener", `${type}: ${error?.message || error}`);
 			}
 		});
 	}
