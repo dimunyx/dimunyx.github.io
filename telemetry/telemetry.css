@@ -43,6 +43,11 @@
         margin: 0 auto;
 }
 
+#tele-stats {
+        display: grid;
+        gap: 14px;
+}
+
 .tele-card {
         padding: 20px;
         border: 1px solid var(--md-outline-variant);
