@@ -15,6 +15,21 @@
 	   repository — nothing here is invented. */
 	const ENTRIES = [
 		{
+			id: "v033-supabase",
+			date: "2026-10-13",
+			title: "v0.3.3 — Supabase backend",
+			category: "Website",
+			kind: "major",
+			description: "The site got a real backend: reactions and telemetry now live in Postgres instead of the browser.",
+			changes: [
+				"Likes and dislikes became global — every visitor sees the same counts, stored in Supabase",
+				"Telemetry moved from GoatCounter to the same Supabase project; /telemetry loads stats without a token",
+				"Nixwebring left the page: it is a status-bar button that opens Previous, Ring, Random and Next",
+				"Six new themes: One Dark, Monokai, Synthwave '84, Palenight, GitHub Dark and Rosé Pine Dawn",
+				"Explore Projects and Devlog hero buttons got a context menu",
+			],
+		},
+		{
 			id: "v031-hero-devlog",
 			date: "2026-10-11",
 			title: "v0.3.1 — hero, devlog and deep links",

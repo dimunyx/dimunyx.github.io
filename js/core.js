@@ -8,7 +8,7 @@
 	const SETTINGS_SCHEMA = 2;
 	const LEGACY_KEYS = ["dimunyx-settings-v1", "dimunyx-layout-v1", "dimunyx-repo-stats-v1"];
 
-	const THEME_ORDER = ["mocha", "macchiato", "frappe", "latte", "gruvbox", "ayu", "adwaita", "kanagawa", "eldritch", "tokyo-night", "nord", "rose-pine", "dracula"];
+	const THEME_ORDER = ["mocha", "macchiato", "frappe", "latte", "gruvbox", "ayu", "adwaita", "kanagawa", "eldritch", "tokyo-night", "nord", "rose-pine", "dracula", "onedark", "monokai", "synthwave", "palenight", "github-dark", "rose-pine-dawn"];
 	const THEME_LABELS = {
 		mocha: "Catppuccin Mocha",
 		macchiato: "Catppuccin Macchiato",
@@ -23,6 +23,12 @@
 		nord: "Nord",
 		"rose-pine": "Rosé Pine",
 		dracula: "Dracula",
+		onedark: "One Dark",
+		monokai: "Monokai",
+		synthwave: "Synthwave '84",
+		palenight: "Palenight",
+		"github-dark": "GitHub Dark",
+		"rose-pine-dawn": "Rosé Pine Dawn",
 	};
 	const THEME_ACCENTS = {
 		mocha: { blue: "#89b4fa", purple: "#cba6f7", green: "#a6e3a1", peach: "#fab387", red: "#f38ba8", yellow: "#f9e2af", black: "#11111b", white: "#ffffff" },
@@ -38,6 +44,12 @@
 		nord: { blue: "#81a1c1", purple: "#b48ead", green: "#a3be8c", peach: "#d08770", red: "#bf616a", yellow: "#ebcb8b", black: "#2e3440", white: "#eceff4" },
 		"rose-pine": { blue: "#9ccfd8", purple: "#c4a7e7", green: "#31748f", peach: "#f6c177", red: "#eb6f92", yellow: "#f6c177", black: "#191724", white: "#e0def4" },
 		dracula: { blue: "#8be9fd", purple: "#bd93f9", green: "#50fa7b", peach: "#ffb86c", red: "#ff5555", yellow: "#f1fa8c", black: "#21222c", white: "#f8f8f2" },
+		onedark: { blue: "#61afef", purple: "#c678dd", green: "#98c379", peach: "#e5c07b", red: "#e06c75", yellow: "#e5c07b", black: "#282c34", white: "#abb2bf" },
+		monokai: { blue: "#66d9ef", purple: "#ae81ff", green: "#a6e22e", peach: "#fd971f", red: "#f92672", yellow: "#e6db74", black: "#272822", white: "#f8f8f2" },
+		synthwave: { blue: "#36f9f6", purple: "#ff7edb", green: "#72f1b8", peach: "#ff8b39", red: "#fe4450", yellow: "#fede5d", black: "#262335", white: "#ffffff" },
+		palenight: { blue: "#82aaff", purple: "#c792ea", green: "#c3e88d", peach: "#f78c6c", red: "#ff5370", yellow: "#ffcb6b", black: "#292d3e", white: "#d0d0d0" },
+		"github-dark": { blue: "#58a6ff", purple: "#bc8cff", green: "#3fb950", peach: "#d29922", red: "#f85149", yellow: "#e3b341", black: "#0d1117", white: "#e6edf3" },
+		"rose-pine-dawn": { blue: "#56949f", purple: "#907aa9", green: "#286983", peach: "#ea9d34", red: "#b4637a", yellow: "#ea9d34", black: "#575279", white: "#faf4ed" },
 	};
 	/* A few extra swatch colours shown in the Palette workspace preview. */
 	const THEME_PREVIEW = {
@@ -54,6 +66,12 @@
 		nord: ["#2e3440", "#434c5e", "#88c0d0", "#a3be8c", "#ebcb8b", "#bf616a"],
 		"rose-pine": ["#191724", "#26233a", "#c4a7e7", "#31748f", "#f6c177", "#eb6f92"],
 		dracula: ["#282a36", "#44475a", "#bd93f9", "#50fa7b", "#f1fa8c", "#ff5555"],
+		onedark: ["#282c34", "#353b45", "#61afef", "#98c379", "#e5c07b", "#e06c75"],
+		monokai: ["#272822", "#49483e", "#66d9ef", "#a6e22e", "#e6db74", "#f92672"],
+		synthwave: ["#262335", "#383252", "#ff7edb", "#72f1b8", "#fede5d", "#fe4450"],
+		palenight: ["#292d3e", "#343951", "#82aaff", "#c3e88d", "#ffcb6b", "#ff5370"],
+		"github-dark": ["#0d1117", "#21262d", "#58a6ff", "#3fb950", "#e3b341", "#f85149"],
+		"rose-pine-dawn": ["#faf4ed", "#f2e9e1", "#575279", "#286983", "#ea9d34", "#b4637a"],
 	};
 	const ACCENT_NAMES = ["blue", "purple", "green", "peach", "red", "yellow", "black", "white"];
 
@@ -360,6 +378,9 @@
 	DX.THEME_PREVIEW = THEME_PREVIEW;
 	DX.ACCENT_NAMES = ACCENT_NAMES;
 	DX.isHexColor = isHex;
+
+	/* Shared Supabase backend (reactions + telemetry). Publishable key: public. */
+	DX.supabase = { url: "https://vjeqkzvurtccdmrxtgcc.supabase.co", anonKey: "sb_publishable_JeHxCdO-5If3kUadHkXW6g_oKm2Hd0r" };
 
 	DX.settings = {
 		get: getSettings,

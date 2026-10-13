@@ -132,9 +132,13 @@
 			event.preventDefault();
 			return;
 		}
-		if (event.target.closest(".desktop-context-menu")) {
+		const insideWebring = Boolean(event.target.closest("#webring-menu"));
+		if (event.target.closest(".desktop-context-menu") && !insideWebring) {
 			event.preventDefault();
 			return;
+		}
+		if (insideWebring && element("webring-menu") && !element("webring-menu").hidden) {
+			element("status-webring")?.click();
 		}
 
 		closeAll();
@@ -149,7 +153,7 @@
 			return;
 		}
 
-		const revealTrigger = event.target.closest(".about-trigger, .telegram-trigger");
+		const revealTrigger = event.target.closest(".about-trigger, .telegram-trigger, .hero__btn");
 		if (revealTrigger) {
 			event.preventDefault();
 			actionTrigger = revealTrigger;

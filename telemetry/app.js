@@ -1,22 +1,16 @@
-/* Telemetry dashboard: pulls GoatCounter stats with a locally stored API token.
-   Everything is vanilla, zero dependencies; the token never leaves the browser. */
+/* Telemetry dashboard: Supabase events + reactions, no token needed.
+   Config must stay in sync with DX.supabase in js/core.js. */
 (function () {
 	"use strict";
 
-	const TOKEN_KEY = "dimunyx-gc-token-v1";
-	const API = "https://dimunyx.goatcounter.com/api/v0";
+	const CONFIG = { url: "https://vjeqkzvurtccdmrxtgcc.supabase.co", anonKey: "sb_publishable_JeHxCdO-5If3kUadHkXW6g_oKm2Hd0r" };
 
 	const els = {};
 
 	function cache() {
 		for (const id of [
-			"tele-connect",
-			"tele-connect-form",
-			"tele-token",
-			"tele-connect-error",
 			"tele-stats",
 			"tele-period",
-			"tele-disconnect",
 			"kpi-visits",
 			"kpi-today",
 			"kpi-events",
@@ -36,23 +30,6 @@
 		}
 	}
 
-	function getToken() {
-		try {
-			return localStorage.getItem(TOKEN_KEY) || "";
-		} catch (error) {
-			return "";
-		}
-	}
-
-	function setToken(value) {
-		try {
-			if (value) localStorage.setItem(TOKEN_KEY, value);
-			else localStorage.removeItem(TOKEN_KEY);
-		} catch (error) {
-			/* private mode: the session just won't persist the token */
-		}
-	}
-
 	function show(node, visible) {
 		if (node) node.hidden = !visible;
 	}
@@ -69,56 +46,73 @@
 		return date.toISOString();
 	}
 
-	function api(path) {
-		return fetch(`${API}${path}`, {
-			headers: {
-				Authorization: `Bearer ${getToken()}`,
-				"Content-Type": "application/json",
-			},
-		}).then(async (response) => {
-			const body = await response.json().catch(() => ({}));
-			if (!response.ok) throw new Error(body.error || `HTTP ${response.status}`);
-			return body;
-		});
-	}
-
 	function dayKey(date) {
 		return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 	}
 
-	function formatDay(day) {
-		const [, month, date] = String(day).split("-");
-		return `${month}/${date}`;
+	function rest(path) {
+		return fetch(`${CONFIG.url}/rest/v1/${path}`, {
+			headers: {
+				apikey: CONFIG.anonKey,
+				Authorization: `Bearer ${CONFIG.anonKey}`,
+				"Content-Type": "application/json",
+			},
+		}).then(async (response) => {
+			const body = await response.json().catch(() => null);
+			if (!response.ok) throw new Error(`HTTP ${response.status}`);
+			return Array.isArray(body) ? body : [];
+		});
 	}
 
-	function fillKpis(total, hits) {
-		els["kpi-visits"].textContent = String(total.total ?? 0);
-		els["kpi-events"].textContent = String(total.total_events ?? 0);
+	function daysRange(count) {
+		const out = [];
+		const now = new Date();
+		for (let offset = count - 1; offset >= 0; offset -= 1) {
+			const date = new Date();
+			date.setDate(now.getDate() - offset);
+			out.push(dayKey(date));
+		}
+		return out;
+	}
+
+	function groupCount(rows, keyFn) {
+		const counts = new Map();
+		for (const row of rows) {
+			const key = keyFn(row);
+			if (!key) continue;
+			counts.set(key, (counts.get(key) || 0) + 1);
+		}
+		return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+	}
+
+	function fillKpis(views, days) {
 		const today = dayKey(new Date());
-		const days = Array.isArray(total.stats) ? total.stats : [];
-		const todayStat = days.find((stat) => stat.day === today);
-		els["kpi-today"].textContent = String(todayStat?.daily ?? 0);
-		const peak = days.reduce((max, stat) => Math.max(max, stat.daily || 0), 0);
-		els["kpi-peak"].textContent = String(peak);
-		void hits;
+		const daily = new Map();
+		for (const view of views) {
+			const key = dayKey(new Date(view.created_at));
+			daily.set(key, (daily.get(key) || 0) + 1);
+		}
+		els["kpi-visits"].textContent = String(views.length);
+		els["kpi-today"].textContent = String(daily.get(today) || 0);
+		els["kpi-peak"].textContent = String(days.reduce((max, day) => Math.max(max, daily.get(day) || 0), 0));
+		return daily;
 	}
 
-	function renderChart(total) {
+	function renderChart(days, daily) {
 		const chart = els["tele-chart"];
 		chart.replaceChildren();
-		const days = Array.isArray(total.stats) ? total.stats : [];
 		if (!days.length) {
 			show(els["tele-chart-empty"], true);
 			return;
 		}
 		show(els["tele-chart-empty"], false);
-		const peak = days.reduce((max, stat) => Math.max(max, stat.daily || 0), 0) || 1;
-		for (const stat of days) {
+		const peak = days.reduce((max, day) => Math.max(max, daily.get(day) || 0), 0) || 1;
+		for (const day of days) {
+			const value = daily.get(day) || 0;
 			const bar = document.createElement("div");
-			const value = stat.daily || 0;
 			bar.className = `tele-chart__bar${value ? "" : " tele-chart__bar--empty"}`;
 			bar.style.height = `${Math.max(4, Math.round((value / peak) * 100))}%`;
-			bar.title = `${stat.day}: ${value}`;
+			bar.title = `${day}: ${value}`;
 			chart.append(bar);
 		}
 	}
@@ -152,35 +146,23 @@
 		return row;
 	}
 
-	function renderPages(hits) {
+	function renderPages(views) {
 		const list = els["tele-pages"];
 		list.replaceChildren();
-		const pages = hits
-			.filter((hit) => !hit.event)
-			.sort((a, b) => (b.count || 0) - (a.count || 0))
-			.slice(0, 10);
+		const pages = groupCount(views, (view) => view.path).slice(0, 10);
 		show(els["tele-pages-empty"], pages.length === 0);
-		const max = pages[0]?.count || 0;
-		for (const page of pages) list.append(listRow(page.path, page.count || 0, max));
+		const max = pages[0]?.[1] || 0;
+		for (const [path, count] of pages) list.append(listRow(path, count, max));
 	}
 
-	function renderLikes(hits) {
+	function renderLikes(totals) {
 		const list = els["tele-likes"];
 		list.replaceChildren();
-		const repos = new Map();
-		for (const hit of hits) {
-			if (!hit.event) continue;
-			const match = /^(like|dislike)\/(.+)$/.exec(hit.path);
-			if (!match) continue;
-			const [, action, repo] = match;
-			const entry = repos.get(repo) || { likes: 0, dislikes: 0 };
-			if (action === "like") entry.likes += hit.count || 0;
-			else entry.dislikes += hit.count || 0;
-			repos.set(repo, entry);
-		}
-		const rows = [...repos.entries()].sort((a, b) => b[1].likes + b[1].dislikes - (a[1].likes + a[1].dislikes));
+		const rows = totals
+			.filter((row) => row && typeof row.repo === "string")
+			.sort((a, b) => (b.likes + b.dislikes) - (a.likes + a.dislikes));
 		show(els["tele-likes-empty"], rows.length === 0);
-		for (const [repo, stat] of rows) {
+		for (const stat of rows) {
 			const extra = document.createElement("span");
 			const up = document.createElement("span");
 			up.className = `tele-like-stat tele-like-stat--up${stat.likes ? " is-active" : ""}`;
@@ -189,84 +171,54 @@
 			down.className = `tele-like-stat tele-like-stat--down${stat.dislikes ? " is-active" : ""}`;
 			down.textContent = `👎 ${stat.dislikes}`;
 			extra.append(up, down);
-			list.append(listRow(repo, null, 0, extra));
+			list.append(listRow(stat.repo, null, 0, extra));
 		}
+		return rows.reduce((sum, row) => sum + row.likes + row.dislikes, 0);
 	}
 
-	function renderErrors(hits) {
+	function renderErrors(events) {
 		const list = els["tele-errors"];
 		list.replaceChildren();
-		const errors = hits
-			.filter((hit) => hit.event && hit.path.startsWith("error/"))
-			.sort((a, b) => (b.count || 0) - (a.count || 0))
-			.slice(0, 10);
+		const errors = groupCount(
+			events.filter((event) => event.name.startsWith("error/")),
+			(event) => (event.title ? `${event.name} — ${event.title}` : event.name),
+		).slice(0, 10);
 		show(els["tele-errors-empty"], errors.length === 0);
-		const max = errors[0]?.count || 0;
-		for (const error of errors) list.append(listRow(error.path, error.count || 0, max));
+		const max = errors[0]?.[1] || 0;
+		for (const [name, count] of errors) list.append(listRow(name, count, max));
 	}
 
 	async function load() {
-		const days = Number(els["tele-period"]?.value) || 7;
+		const period = Number(els["tele-period"]?.value) || 7;
 		show(els["tele-loading"], true);
 		message(els["tele-fatal"], "");
 		try {
-			const start = isoDaysAgo(days);
-			const end = new Date().toISOString();
-			const [total, hitsData] = await Promise.all([
-				api(`/stats/total?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`),
-				api(`/stats/hits?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&limit=100&group=day`),
+			const start = isoDaysAgo(period);
+			const [events, totals] = await Promise.all([
+				rest(`events?select=name,path,title,created_at&created_at=gte.${encodeURIComponent(start)}&order=created_at.asc&limit=1000`),
+				rest("reaction_totals?select=repo,likes,dislikes"),
 			]);
-			const hits = Array.isArray(hitsData.hits) ? hitsData.hits : [];
-			fillKpis(total, hits);
-			renderChart(total);
-			renderPages(hits);
-			renderLikes(hits);
-			renderErrors(hits);
+			const views = events.filter((event) => event.name === "view");
+			const days = daysRange(period);
+			const daily = fillKpis(views, days);
+			renderChart(days, daily);
+			renderPages(views);
+			const reactionTotal = renderLikes(totals);
+			els["kpi-events"].textContent = String(reactionTotal);
+			renderErrors(events);
 			show(els["tele-stats"], true);
 		} catch (error) {
-			if (/401|403|token| unauthorized/i.test(String(error?.message))) {
-				setToken("");
-				show(els["tele-stats"], false);
-				await showConnect(`Token rejected: ${error.message}. Paste a fresh one.`);
-			} else {
-				message(els["tele-fatal"], `Could not load stats: ${error?.message || error}`);
-			}
+			message(els["tele-fatal"], `Could not load stats: ${error?.message || error}`);
+			show(els["tele-stats"], false);
 		} finally {
 			show(els["tele-loading"], false);
 		}
 	}
 
-	async function showConnect(errorText) {
-		show(els["tele-connect"], true);
-		show(els["tele-stats"], false);
-		message(els["tele-connect-error"], errorText || "");
-		els["tele-token"]?.focus();
-	}
-
 	function init() {
 		cache();
 
-		els["tele-connect-form"]?.addEventListener("submit", (event) => {
-			event.preventDefault();
-			const value = els["tele-token"]?.value.trim();
-			if (!value) {
-				message(els["tele-connect-error"], "Paste the token first.");
-				return;
-			}
-			setToken(value);
-			if (els["tele-token"]) els["tele-token"].value = "";
-			show(els["tele-connect"], false);
-			load();
-		});
-
-		els["tele-disconnect"]?.addEventListener("click", () => {
-			setToken("");
-			showConnect("");
-		});
-
-		els["tele-period"]?.addEventListener("change", () => {
-			if (getToken()) load();
-		});
+		els["tele-period"]?.addEventListener("change", load);
 
 		/* Ctrl+Alt+T is the site-wide shortcut: here it goes back home. */
 		document.addEventListener("keydown", (event) => {
@@ -276,8 +228,7 @@
 			}
 		});
 
-		if (getToken()) load();
-		else showConnect("");
+		load();
 	}
 
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

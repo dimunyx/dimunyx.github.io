@@ -15,17 +15,6 @@
 			<a class="tele-topbar__back" href="../">← Site</a>
 		</header>
 		<main class="tele-main">
-			<section id="tele-connect" class="tele-card" hidden>
-				<h2>Connect GoatCounter</h2>
-				<p>Open <a href="https://dimunyx.goatcounter.com/settings/api" target="_blank" rel="noopener noreferrer">dimunyx.goatcounter.com/settings/api</a>, press <b>Create new token</b> and paste it here.</p>
-				<p class="tele-note">The token is stored only in this browser (localStorage) and never leaves it except as requests to GoatCounter.</p>
-				<form id="tele-connect-form" class="tele-connect">
-					<input id="tele-token" type="password" placeholder="API token" autocomplete="off" spellcheck="false" required/>
-					<button class="tele-btn" type="submit">Connect</button>
-				</form>
-				<p id="tele-connect-error" class="tele-error" hidden></p>
-			</section>
-
 			<section id="tele-stats" hidden>
 				<div class="tele-toolbar">
 					<label class="tele-period">Period
@@ -35,7 +24,6 @@
 							<option value="90">90 days</option>
 						</select>
 					</label>
-					<button id="tele-disconnect" class="tele-btn tele-btn--tonal" type="button">Disconnect</button>
 				</div>
 
 				<div class="tele-kpis">

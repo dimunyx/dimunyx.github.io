@@ -1,47 +1,72 @@
-/* Telemetry: GoatCounter pageviews, error events and reaction events.
-   Requires the count.js script tag in index.html (replace MYCODE).
-   The API is available at load time; init() wires listeners at boot. */
+/* Telemetry: pageviews, error and reaction events stored in Supabase (DX.supabase).
+   Fire-and-forget — a failed or missing backend can never break the site. */
 (function () {
 	"use strict";
 
 	const DX = window.DX;
 	const MAX_ERROR_EVENTS = 20;
 	const MAX_QUEUE = 50;
+	const FLUSH_DELAY = 800;
 
 	const seenErrors = new Set();
 	const pending = [];
+	let flushTimer = 0;
+
+	function config() {
+		const db = DX.supabase;
+		return db && db.url && db.anonKey ? db : null;
+	}
 
 	function flush() {
-		while (pending.length) {
-			const vars = pending.shift();
-			try {
-				window.goatcounter?.count?.(vars);
-			} catch (error) {
-				/* telemetry must never break the site */
-			}
-		}
-	}
-
-	function send(vars) {
-		if (typeof window.goatcounter?.count === "function") {
-			flush();
-			try {
-				window.goatcounter.count(vars);
-			} catch (error) {
-				/* ignore */
-			}
+		if (!pending.length) return;
+		const db = config();
+		if (!db) {
+			pending.length = 0;
 			return;
 		}
-		pending.push(vars);
+		const rows = pending.splice(0, pending.length);
+		try {
+			fetch(`${db.url}/rest/v1/events`, {
+				method: "POST",
+				headers: {
+					apikey: db.anonKey,
+					Authorization: `Bearer ${db.anonKey}`,
+					"Content-Type": "application/json",
+					Prefer: "return=minimal",
+				},
+				body: JSON.stringify(rows),
+				keepalive: true,
+			}).catch(() => {});
+		} catch (error) {
+			/* telemetry must never break the site */
+		}
+	}
+
+	function scheduleFlush() {
+		if (flushTimer) return;
+		flushTimer = window.setTimeout(() => {
+			flushTimer = 0;
+			flush();
+		}, FLUSH_DELAY);
+	}
+
+	function push(name, title) {
+		if (!config()) return;
+		pending.push({
+			name: String(name).slice(0, 200),
+			path: String(window.location.pathname || "/").slice(0, 300),
+			title: title ? String(title).slice(0, 160) : "",
+		});
 		if (pending.length > MAX_QUEUE) pending.shift();
+		scheduleFlush();
 	}
 
-	/* Fire-and-forget event: path doubles as the event name in GoatCounter. */
+	/* Fire-and-forget event: the name doubles as the event id in the dashboard. */
 	function event(name, title) {
-		send({ event: true, path: String(name).slice(0, 200), title: title ? String(title).slice(0, 160) : "", no_session: true });
+		push(name, title);
 	}
 
-	/* Error reporting, deduplicated so one bug cannot flood the counter. */
+	/* Error reporting, deduplicated so one bug cannot flood the table. */
 	function report(name, message) {
 		const text = String(message || "unknown error").slice(0, 160);
 		const key = `${name}:${text}`;
@@ -52,7 +77,7 @@
 	}
 
 	function countView() {
-		send({ path: window.location.pathname || "/" });
+		push("view", document.title || "");
 	}
 
 	function onWindowError(event) {
@@ -83,13 +108,11 @@
 			window.setTimeout(countView, 0);
 		});
 
-		/* Keep flushing while count.js loads (async, may lose the race). */
-		let tries = 0;
-		const timer = window.setInterval(() => {
-			flush();
-			tries += 1;
-			if (!pending.length || tries > 40) window.clearInterval(timer);
-		}, 500);
+		/* Send whatever is queued when the tab goes away. */
+		document.addEventListener("visibilitychange", () => {
+			if (document.visibilityState === "hidden") flush();
+		});
+		window.addEventListener("pagehide", flush);
 	}
 
 	DX.telemetry = { init, event, report };

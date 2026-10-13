@@ -8,8 +8,8 @@
 		{
 			id: "main",
 			label: "Main",
-			sections: ["about", "using-now", "interests", "experience", "social", "devlog", "nixwebring"],
-			default: { left: ["about", "using-now", "interests", "experience", "social"], right: [], page: ["devlog", "nixwebring"] },
+			sections: ["about", "using-now", "interests", "experience", "social", "devlog"],
+			default: { left: ["about", "using-now", "interests", "experience", "social"], right: [], page: ["devlog"] },
 		},
 		{
 			id: "projects",

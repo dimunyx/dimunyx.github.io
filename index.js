@@ -5,12 +5,11 @@
 	const DX = window.DX;
 	const { element } = DX.util;
 
-	function wireActionsMenu() {
-		const trigger = element("status-actions");
-		const menu = element("actions-menu");
-		if (!trigger || !menu) return;
-
+	/* Shared popup wiring for the status-bar menus: open above the trigger,
+	   close on outside pointerdown, Escape and toggle. */
+	function createPopover(trigger, menu, options = {}) {
 		let closeTimer = null;
+		const align = options.align || "left";
 
 		const finishClose = () => {
 			closeTimer = null;
@@ -18,7 +17,7 @@
 			menu.hidden = true;
 		};
 
-		const closeMenu = (restoreFocus = true) => {
+		const close = (restoreFocus = true) => {
 			if (menu.hidden) return;
 			window.clearTimeout(closeTimer);
 			menu.classList.remove("is-closing");
@@ -28,12 +27,14 @@
 			if (restoreFocus) trigger.focus();
 		};
 
-		const openMenu = () => {
+		const open = () => {
 			window.clearTimeout(closeTimer);
 			menu.classList.remove("is-closing");
-			const rect = trigger.getBoundingClientRect();
 			menu.hidden = false;
-			menu.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - menu.offsetWidth - 8))}px`;
+			const rect = trigger.getBoundingClientRect();
+			const width = menu.offsetWidth;
+			const left = align === "right" ? rect.right - width : rect.left;
+			menu.style.left = `${Math.max(8, Math.min(left, window.innerWidth - width - 8))}px`;
 			menu.style.top = `${Math.max(8, rect.top - menu.offsetHeight - 8)}px`;
 			trigger.setAttribute("aria-expanded", "true");
 			trigger.classList.add("is-open");
@@ -54,7 +55,7 @@
 		};
 
 		trigger.addEventListener("click", () => {
-			if (menu.hidden) openMenu();
+			if (menu.hidden) open();
 			else animateClose();
 		});
 
@@ -65,13 +66,24 @@
 		});
 
 		DX.esc.push({
-			id: "actions-menu",
+			id: options.id || menu.id,
 			isActive: () => !menu.hidden,
 			close: () => {
 				animateClose();
 				return true;
 			},
 		});
+
+		return { open, close };
+	}
+
+	function wireActionsMenu() {
+		const trigger = element("status-actions");
+		const menu = element("actions-menu");
+		if (!trigger || !menu) return;
+
+		const popover = createPopover(trigger, menu, { id: "actions-menu" });
+		const closeMenu = popover.close;
 
 		element("actions-settings")?.addEventListener("click", () => {
 			closeMenu(false);
@@ -94,6 +106,13 @@
 				if (!window.closed) DX.modals.open("exit-modal", { returnFocus: trigger });
 			}, 150);
 		});
+	}
+
+	function wireWebringMenu() {
+		const trigger = element("status-webring");
+		const menu = element("webring-menu");
+		if (!trigger || !menu) return;
+		createPopover(trigger, menu, { id: "webring-menu", align: "right" });
 	}
 
 	function wireHero() {
@@ -163,6 +182,7 @@
 		safe("status bar", () => DX.statusbar.init());
 		safe("hero", wireHero);
 		safe("actions menu", wireActionsMenu);
+		safe("webring menu", wireWebringMenu);
 		safe("telemetry shortcut", wireTelemetryShortcut);
 		safe("router", () => DX.router.init());
 		loadVersion();

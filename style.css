@@ -263,6 +263,126 @@
         --md-scrim: #191a21cc;
 }
 
+/* One Dark */
+[data-theme="onedark"] {
+        color-scheme: dark;
+        --md-primary: #61afef;
+        --md-on-primary: #282c34;
+        --md-primary-container: #2c313a;
+        --md-on-primary-container: #abb2bf;
+        --md-secondary: #c678dd;
+        --md-secondary-container: #353b45;
+        --md-on-secondary-container: #abb2bf;
+        --md-surface: #282c34;
+        --md-surface-container: #2c313a;
+        --md-surface-container-high: #353b45;
+        --md-on-surface: #abb2bf;
+        --md-on-surface-variant: #9da5b4;
+        --md-outline: #5c6370;
+        --md-outline-variant: #3a3f4b;
+        --md-scrim: #21252bcc;
+}
+
+/* Monokai */
+[data-theme="monokai"] {
+        color-scheme: dark;
+        --md-primary: #a6e22e;
+        --md-on-primary: #272822;
+        --md-primary-container: #3e3d32;
+        --md-on-primary-container: #f8f8f2;
+        --md-secondary: #f92672;
+        --md-secondary-container: #49483e;
+        --md-on-secondary-container: #f8f8f2;
+        --md-surface: #272822;
+        --md-surface-container: #2d2e26;
+        --md-surface-container-high: #3e3d32;
+        --md-on-surface: #f8f8f2;
+        --md-on-surface-variant: #b9b9b0;
+        --md-outline: #75715e;
+        --md-outline-variant: #49483e;
+        --md-scrim: #1b1c17cc;
+}
+
+/* Synthwave '84 */
+[data-theme="synthwave"] {
+        color-scheme: dark;
+        --md-primary: #ff7edb;
+        --md-on-primary: #262335;
+        --md-primary-container: #383252;
+        --md-on-primary-container: #ffffff;
+        --md-secondary: #36f9f6;
+        --md-secondary-container: #383252;
+        --md-on-secondary-container: #ffffff;
+        --md-surface: #262335;
+        --md-surface-container: #2c293f;
+        --md-surface-container-high: #383252;
+        --md-on-surface: #ffffff;
+        --md-on-surface-variant: #b9b7e6;
+        --md-outline: #4a4572;
+        --md-outline-variant: #383252;
+        --md-scrim: #1b182acc;
+}
+
+/* Palenight */
+[data-theme="palenight"] {
+        color-scheme: dark;
+        --md-primary: #82aaff;
+        --md-on-primary: #292d3e;
+        --md-primary-container: #343951;
+        --md-on-primary-container: #d0d0d0;
+        --md-secondary: #c792ea;
+        --md-secondary-container: #3b3f54;
+        --md-on-secondary-container: #d0d0d0;
+        --md-surface: #292d3e;
+        --md-surface-container: #2e3243;
+        --md-surface-container-high: #343951;
+        --md-on-surface: #d0d0d0;
+        --md-on-surface-variant: #a6accd;
+        --md-outline: #676e95;
+        --md-outline-variant: #454b61;
+        --md-scrim: #1f2331cc;
+}
+
+/* GitHub Dark */
+[data-theme="github-dark"] {
+        color-scheme: dark;
+        --md-primary: #58a6ff;
+        --md-on-primary: #0d1117;
+        --md-primary-container: #161b22;
+        --md-on-primary-container: #e6edf3;
+        --md-secondary: #3fb950;
+        --md-secondary-container: #21262d;
+        --md-on-secondary-container: #e6edf3;
+        --md-surface: #0d1117;
+        --md-surface-container: #161b22;
+        --md-surface-container-high: #21262d;
+        --md-on-surface: #e6edf3;
+        --md-on-surface-variant: #8b949e;
+        --md-outline: #30363d;
+        --md-outline-variant: #21262d;
+        --md-scrim: #010409cc;
+}
+
+/* Rosé Pine Dawn */
+[data-theme="rose-pine-dawn"] {
+        color-scheme: light;
+        --md-primary: #575279;
+        --md-on-primary: #faf4ed;
+        --md-primary-container: #f2e9e1;
+        --md-on-primary-container: #575279;
+        --md-secondary: #907aa9;
+        --md-secondary-container: #f2e9e1;
+        --md-on-secondary-container: #575279;
+        --md-surface: #faf4ed;
+        --md-surface-container: #f2e9e1;
+        --md-surface-container-high: #e9e0d4;
+        --md-on-surface: #575279;
+        --md-on-surface-variant: #797593;
+        --md-outline: #b6b1a8;
+        --md-outline-variant: #d8d0c4;
+        --md-scrim: #f2e9e1cc;
+}
+
 /* Animation preference set from Settings */
 html[data-anim="reduced"] {
         --md-motion: 100ms linear;
@@ -1084,44 +1204,6 @@ section ul li .telegram-trigger:hover,
         transform: translateY(-1px);
 }
 
-.webring {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        gap: 12px;
-}
-
-.webring a {
-        display: inline-flex;
-        flex: 1 1 160px;
-        min-height: 40px;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 14px;
-        border-radius: 999px;
-        background: var(--md-secondary-container);
-        color: var(--md-on-secondary-container);
-        font-size: 0.9rem;
-        transition: background-color var(--md-motion), color var(--md-motion), transform var(--md-motion), scale 120ms cubic-bezier(.2, 0, 0, 1);
-}
-
-.webring a:hover,
-.webring a:focus-visible {
-        background: var(--md-primary);
-        color: var(--md-on-primary);
-}
-
-.webring a:hover {
-        transform: translateY(-1px);
-}
-
-.webring a img {
-        display: block;
-        width: var(--icon-size);
-        height: var(--icon-size);
-        object-fit: contain;
-}
-
 .friend-card {
         margin-top: 8px;
         padding: 16px;
@@ -1146,13 +1228,6 @@ hr {
         width: 100%;
         max-width: 760px;
         margin: 0 auto;
-}
-
-#nixwebring {
-        width: 100%;
-        max-width: 760px;
-        margin: 16px auto 0;
-        cursor: default;
 }
 
 .telegram-modal[hidden] {
@@ -1756,7 +1831,6 @@ html.is-compact .layout-right {
 
 html.is-compact .layout-left > section,
 html.is-compact .layout-right > section,
-html.is-compact #nixwebring,
 html.is-compact #devlog {
         padding: 18px;
 }
@@ -1882,6 +1956,11 @@ button:active {
 
 .clock-menu {
         width: 240px;
+        gap: 4px;
+}
+
+.webring-menu {
+        width: 190px;
         gap: 4px;
 }
 
@@ -2478,7 +2557,7 @@ button:active {
 #devlog {
         width: 100%;
         max-width: 760px;
-        margin: 16px auto 0;
+        margin: 0 auto;
 }
 
 .devlog-trigger {

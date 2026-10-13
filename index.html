@@ -7,10 +7,6 @@
 		<link rel="icon" type="image/png" href="assets/logo.png"/>
 		<link rel="stylesheet" href="style.css"/>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-		<!-- GoatCounter analytics -->
-		<script data-goatcounter="https://dimunyx.goatcounter.com/count"
-			data-goatcounter-settings='{"no_onload":true,"allow_local":true}'
-			async src="https://gc.zgo.at/count.js"></script>
 	</head>
 	<body data-workspace="main">
 		<div id="desktop-context-menu" class="desktop-context-menu" role="menu" aria-label="Desktop menu" hidden>
@@ -198,6 +194,12 @@
 								<option value="nord">Nord</option>
 								<option value="rose-pine">Rosé Pine</option>
 								<option value="dracula">Dracula</option>
+								<option value="onedark">One Dark</option>
+								<option value="monokai">Monokai</option>
+								<option value="synthwave">Synthwave '84</option>
+								<option value="palenight">Palenight</option>
+								<option value="github-dark">GitHub Dark</option>
+								<option value="rose-pine-dawn">Rosé Pine Dawn</option>
 							</select>
 						</label>
 						<label class="settings-color-field" for="settings-accent">
@@ -346,15 +348,6 @@
 					<span class="about-trigger__hint">Click me!</span>
 				</button>
 			</section>
-			<section id="nixwebring" data-section="nixwebring">
-				<h2>Nixwebring</h2>
-				<div class="webring">
-					<a href="https://nixwebr.ing/prev/dimunyx"><img src="assets/previous.svg" alt="Previous"></a>
-					<a href="https://nixwebr.ing"><img src="assets/nixwebring.svg" alt="Nix Webring"></a>
-					<a href="https://nixwebr.ing/rand"><img src="assets/random.svg" alt="Random"></a>
-					<a href="https://nixwebr.ing/next/dimunyx"><img src="assets/next.svg" alt="Next"></a>
-				</div>
-			</section>
 		</div>
 		<div id="section-store" hidden>
 			<section data-section="projects">
@@ -405,6 +398,9 @@
 					<img src="assets/clock.svg" alt="" aria-hidden="true">
 					<span class="status-bar__item status-bar__time" id="status-time"></span>
 				</button>
+				<button class="status-bar__btn" id="status-webring" type="button" aria-label="Nix webring" aria-haspopup="menu" aria-expanded="false" title="Nix Webring">
+					<img src="assets/nixwebring.svg" alt="" aria-hidden="true">
+				</button>
 				<button class="status-bar__btn status-bar__btn--morph" id="status-actions" type="button" aria-label="Site actions" aria-haspopup="menu" aria-expanded="false">
 					<img class="status-bar__btn-icon status-bar__btn-icon--menu" src="assets/menu.svg" alt="" aria-hidden="true">
 					<img class="status-bar__btn-icon status-bar__btn-icon--close" src="assets/close.svg" alt="" aria-hidden="true">
@@ -424,6 +420,20 @@
 			<button class="desktop-context-menu__item" id="actions-exit" type="button" role="menuitem">
 				<img src="assets/exit.svg" alt="" aria-hidden="true"/><span>Exit</span>
 			</button>
+		</div>
+		<div class="desktop-context-menu webring webring-menu" id="webring-menu" role="menu" aria-label="Nix webring" hidden>
+			<a class="desktop-context-menu__item" href="https://nixwebr.ing/prev/dimunyx" role="menuitem">
+				<img src="assets/previous.svg" alt="" aria-hidden="true"/><span>Previous</span>
+			</a>
+			<a class="desktop-context-menu__item" href="https://nixwebr.ing" role="menuitem">
+				<img src="assets/nixwebring.svg" alt="" aria-hidden="true"/><span>Nix Webring</span>
+			</a>
+			<a class="desktop-context-menu__item" href="https://nixwebr.ing/rand" role="menuitem">
+				<img src="assets/random.svg" alt="" aria-hidden="true"/><span>Random</span>
+			</a>
+			<a class="desktop-context-menu__item" href="https://nixwebr.ing/next/dimunyx" role="menuitem">
+				<img src="assets/next.svg" alt="" aria-hidden="true"/><span>Next</span>
+			</a>
 		</div>
 		<div class="desktop-context-menu clock-menu" id="clock-menu" role="menu" aria-label="Session info" hidden>
 			<div class="clock-menu__row" role="menuitem"><span>USER</span><span id="clock-menu-user">dimunyx</span></div>

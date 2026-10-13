@@ -105,6 +105,77 @@
 	/* Permanent per-repo likes/dislikes: never touched by the boot purge. */
 	const REACTIONS_KEY = "dimunyx-reactions-v1";
 
+	/* Supabase Postgres backend — shared config lives in core.js as DX.supabase.
+	   Clear it there and the counts fall back to local-only. */
+	const REACTIONS_DB = DX.supabase || { url: "", anonKey: "" };
+	const VOTER_KEY = "dimunyx-reactions-voter-v1";
+
+	function backendReady() {
+		return Boolean(REACTIONS_DB.url && REACTIONS_DB.anonKey);
+	}
+
+	function dbHeaders(extra = {}) {
+		return {
+			apikey: REACTIONS_DB.anonKey,
+			Authorization: `Bearer ${REACTIONS_DB.anonKey}`,
+			"Content-Type": "application/json",
+			...extra,
+		};
+	}
+
+	function voterId() {
+		try {
+			let id = localStorage.getItem(VOTER_KEY);
+			if (!id) {
+				id = typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+				localStorage.setItem(VOTER_KEY, id);
+			}
+			return id;
+		} catch (error) {
+			return "anonymous";
+		}
+	}
+
+	/* Global counts pulled from the reaction_totals view. */
+	function fetchTotals() {
+		if (!backendReady()) return Promise.resolve();
+		return fetch(`${REACTIONS_DB.url}/rest/v1/reaction_totals?select=repo,likes,dislikes`, { headers: dbHeaders() })
+			.then((response) => {
+				if (!response.ok) throw new Error(`HTTP ${response.status}`);
+				return response.json();
+			})
+			.then((rows) => {
+				const totals = new Map();
+				for (const row of rows) {
+					if (!row || typeof row.repo !== "string") continue;
+					totals.set(row.repo, { likes: Number(row.likes) || 0, dislikes: Number(row.dislikes) || 0 });
+				}
+				state.totals = totals;
+				render();
+			})
+			.catch(() => {
+				/* offline or not configured yet: local counts keep working */
+			});
+	}
+
+	/* My vote, upserted (or cleared) for this repo. Fire and forget. */
+	function pushVote(name, reaction) {
+		if (!backendReady()) return;
+		const voter = voterId();
+		const base = `${REACTIONS_DB.url}/rest/v1/reactions`;
+		const filters = `?repo=eq.${encodeURIComponent(name)}&voter=eq.${encodeURIComponent(voter)}`;
+		const request = reaction
+			? fetch(`${base}?on_conflict=repo,voter`, {
+					method: "POST",
+					headers: dbHeaders({ Prefer: "resolution=merge-duplicates,return=minimal" }),
+					body: JSON.stringify({ repo: name, voter, value: reaction === "like" ? 1 : -1 }),
+				})
+			: fetch(`${base}${filters}`, { method: "DELETE", headers: dbHeaders({ Prefer: "return=minimal" }) });
+		request.catch(() => {
+			/* network hiccup: the local reaction still counts for this browser */
+		});
+	}
+
 	function loadReactions() {
 		try {
 			const parsed = JSON.parse(localStorage.getItem(REACTIONS_KEY));
@@ -124,14 +195,17 @@
 
 	function reactionEntry(name, map = loadReactions()) {
 		const entry = map[name];
-		if (entry && typeof entry === "object") {
-			return {
-				reaction: entry.reaction === "like" || entry.reaction === "dislike" ? entry.reaction : null,
-				likes: Number(entry.likes) || 0,
-				dislikes: Number(entry.dislikes) || 0,
-			};
-		}
-		return { reaction: null, likes: 0, dislikes: 0 };
+		const local =
+			entry && typeof entry === "object"
+				? {
+						reaction: entry.reaction === "like" || entry.reaction === "dislike" ? entry.reaction : null,
+						likes: Number(entry.likes) || 0,
+						dislikes: Number(entry.dislikes) || 0,
+					}
+				: { reaction: null, likes: 0, dislikes: 0 };
+		const shared = state.totals.get(name);
+		if (shared) return { reaction: local.reaction, likes: shared.likes, dislikes: shared.dislikes };
+		return local;
 	}
 
 	/* YouTube semantics: like removes dislike and vice versa, same click clears. */
@@ -147,6 +221,8 @@
 		entry.reaction = next;
 		map[name] = entry;
 		saveReactions(map);
+		state.totals.set(name, { likes: entry.likes, dislikes: entry.dislikes });
+		pushVote(name, next);
 		DX.telemetry?.event(`${next || "none"}/${name}`, next ? `reacted: ${next}` : "reaction cleared");
 		return entry;
 	}
@@ -157,6 +233,7 @@
 		sort: "name-asc",
 		live: null,
 		liveError: null,
+		totals: new Map(),
 	};
 
 	const refs = {};
@@ -449,6 +526,7 @@
 
 		render();
 		loadLiveStats();
+		fetchTotals();
 	}
 
 	DX.projects = { init, list: () => PROJECTS, render };
