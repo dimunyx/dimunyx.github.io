@@ -5,9 +5,18 @@
 	const DX = window.DX;
 	const { element } = DX.util;
 
-	/* Static facts taken from the public GitHub API. Nothing here is invented:
-	   names, URLs, descriptions and languages were read from the repos themselves. */
+	/* Static repository facts taken from the public GitHub API. */
 	const PROJECTS = [
+		{
+			id: "dimunyx",
+			name: "dimunyx",
+			url: "https://github.com/dimunyx/dimunyx",
+			homepage: null,
+			description: "Personal GitHub repository.",
+			category: "Config",
+			languages: [],
+			license: null,
+		},
 		{
 			id: "dimunyx.github.io",
 			name: "dimunyx.github.io",
@@ -49,6 +58,16 @@
 			license: null,
 		},
 		{
+			id: "Arch-Linux-Backup",
+			name: "Arch-Linux-Backup",
+			url: "https://github.com/dimunyx/Arch-Linux-Backup",
+			homepage: null,
+			description: "Backup files and configuration for Arch Linux.",
+			category: "Linux",
+			languages: [],
+			license: null,
+		},
+		{
 			id: "dimunyx-nvim",
 			name: "dimunyx-nvim",
 			url: "https://github.com/dimunyx/dimunyx-nvim",
@@ -74,9 +93,29 @@
 			url: "https://github.com/noctalia-dev/umbriel",
 			homepage: "https://noctalia.dev/",
 			description: "An independent compositor with scrolling, dwindle and master layouts, blur, shadows, and fluid animations.",
-			category: "Contribute",
+			category: "Favorite",
 			languages: ["C++"],
 			license: "MIT",
+		},
+		{
+			id: "noctalia",
+			name: "noctalia",
+			url: "https://github.com/noctalia-dev/noctalia",
+			homepage: "https://docs.noctalia.dev/",
+			description: "A sleek, customizable desktop shell crafted for Wayland.",
+			category: "Favorite",
+			languages: [],
+			license: "MIT",
+		},
+		{
+			id: "Bibata-Modern-Catppuccin-Mocha-Blue",
+			name: "Bibata-Modern-Catppuccin-Mocha-Blue",
+			url: "https://github.com/dimunyx/Bibata-Modern-Catppuccin-Mocha-Blue",
+			homepage: null,
+			description: "Bibata Modern cursor theme in Catppuccin Mocha Blue.",
+			category: "Design",
+			languages: [],
+			license: null,
 		},
 		{
 			id: "nixwebr.ing",
@@ -89,15 +128,6 @@
 			license: null,
 		},
 	];
-
-	/* Short display labels for language chips. Search still matches the full names. */
-	const LANGUAGE_LABELS = {
-		JavaScript: "JS",
-		Makefile: "Mkfile",
-		Shell: "Sh",
-		TypeScript: "TS",
-		Python: "Py",
-	};
 
 	const LIVE_CACHE_KEY = "dimunyx-repo-stats-v1";
 	const LIVE_CACHE_TTL = 10 * 60 * 1000;
@@ -319,15 +349,7 @@
 		description.className = "project-card__desc";
 		description.textContent = project.description;
 
-		const tags = document.createElement("ul");
-		tags.className = "project-card__tags";
-		for (const language of project.languages) {
-			const tag = document.createElement("li");
-			tag.textContent = LANGUAGE_LABELS[language] || language;
-			tags.append(tag);
-		}
-
-		card.append(head, description, tags);
+		card.append(head, description);
 
 		const live = liveEntry(project.name);
 		const meta = document.createElement("p");

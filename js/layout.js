@@ -11,7 +11,7 @@
 	};
 
 	const LAYOUT_KEY = "dimunyx-layout-v1";
-	const LAYOUT_VERSION = 2;
+	const LAYOUT_VERSION = 3;
 
 	const CONTAINER_IDS = { left: "layout-left", right: "layout-right", page: "page-container" };
 
@@ -34,8 +34,29 @@
 			const raw = localStorage.getItem(LAYOUT_KEY);
 			if (!raw) return null;
 			const parsed = JSON.parse(raw);
-			if (!parsed || typeof parsed !== "object" || parsed.version !== LAYOUT_VERSION) return null;
+			if (!parsed || typeof parsed !== "object" || ![2, LAYOUT_VERSION].includes(parsed.version)) return null;
 			if (typeof parsed.workspaces !== "object" || parsed.workspaces === null) return null;
+			if (parsed.version === 2) {
+				const main = parsed.workspaces.main;
+				if (main?.order && typeof main.order === "object") {
+					for (const key of ["left", "right", "page"]) {
+						if (!Array.isArray(main.order[key])) main.order[key] = [];
+					}
+					for (const column of Object.values(main.order)) {
+						if (!Array.isArray(column)) continue;
+						for (const name of ["social", "devlog"]) {
+							const index = column.indexOf(name);
+							if (index !== -1) column.splice(index, 1);
+						}
+					}
+					main.order.right.push("social", "devlog");
+				}
+				if (main?.floating) {
+					delete main.floating.social;
+					delete main.floating.devlog;
+				}
+				parsed.version = LAYOUT_VERSION;
+			}
 			return parsed;
 		} catch (error) {
 			console.warn("[dimunyx] could not read layout", error);

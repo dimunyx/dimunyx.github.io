@@ -9,7 +9,7 @@
 			id: "main",
 			label: "Main",
 			sections: ["about", "using-now", "interests", "experience", "social", "devlog"],
-			default: { left: ["about", "using-now", "interests", "experience", "social"], right: [], page: ["devlog"] },
+			default: { left: ["about", "using-now", "interests", "experience"], right: ["social", "devlog"], page: [] },
 		},
 		{
 			id: "projects",

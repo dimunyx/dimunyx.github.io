@@ -432,9 +432,50 @@ html[data-anim="disabled"] *::after {
         box-sizing: border-box;
 }
 
+/* Keep native scrolling and keyboard/touch behavior, with a site themed scrollbar. */
+body {
+        scrollbar-color: var(--md-primary) transparent;
+        scrollbar-width: auto;
+}
+
+body:focus-within {
+        scrollbar-color: var(--md-primary) transparent;
+}
+
+*::-webkit-scrollbar {
+        width: 22px;
+        height: 22px;
+}
+
+*::-webkit-scrollbar-track {
+        background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+        min-height: 36px;
+        border: 3px solid transparent;
+        border-radius: 999px;
+        background: var(--md-primary);
+        transition: background-color 220ms ease, box-shadow 220ms ease, border-width 220ms ease;
+}
+
+*::-webkit-scrollbar-thumb:hover,
+*:focus-within::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb:active {
+        background: var(--md-primary);
+        border-width: 1px;
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-primary) 70%, white);
+}
+
+*::-webkit-scrollbar-corner {
+        background: transparent;
+}
+
 html {
+        height: 100%;
         min-width: 320px;
         background: var(--md-surface);
+        overflow: hidden;
         scroll-behavior: smooth;
 }
 
@@ -443,10 +484,14 @@ html.is-modal-open {
 }
 
 body {
-        min-height: 100vh;
+        height: calc(100vh - var(--status-bar-height));
+        height: calc(100dvh - var(--status-bar-height));
+        min-height: 0;
         margin: 0;
         padding: clamp(16px, 3vw, 40px);
-        padding-bottom: calc(clamp(16px, 3vw, 40px) + var(--status-bar-height));
+        padding-bottom: clamp(16px, 3vw, 40px);
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
         background: var(--md-surface);
         color: var(--md-on-surface);
         font-family: Roboto, "Segoe UI", system-ui, sans-serif;
@@ -731,14 +776,32 @@ body:not([data-workspace="main"]) .hero {
         top: -150px;
         left: -90px;
         background: radial-gradient(circle, color-mix(in srgb, var(--md-primary) 30%, transparent) 0%, transparent 70%);
-        animation: hero-glow-drift-a 22s ease-in-out infinite alternate;
+        animation: hero-glow-drift-a 12s ease-in-out infinite alternate;
 }
 
 .hero__glow--secondary {
         right: -110px;
         bottom: -160px;
         background: radial-gradient(circle, color-mix(in srgb, var(--md-secondary) 26%, transparent) 0%, transparent 70%);
-        animation: hero-glow-drift-b 26s ease-in-out infinite alternate;
+        animation: hero-glow-drift-b 15s ease-in-out infinite alternate;
+}
+
+.hero__glow--tertiary {
+        top: -190px;
+        right: 28%;
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(circle, color-mix(in srgb, var(--md-primary) 22%, transparent) 0%, transparent 70%);
+        animation: hero-glow-drift-c 14s ease-in-out infinite alternate;
+}
+
+.hero__glow--quaternary {
+        bottom: -190px;
+        left: 24%;
+        width: 280px;
+        height: 280px;
+        background: radial-gradient(circle, color-mix(in srgb, var(--md-secondary) 20%, transparent) 0%, transparent 70%);
+        animation: hero-glow-drift-d 17s ease-in-out infinite alternate;
 }
 
 .hero__logo,
@@ -812,14 +875,46 @@ body:not([data-workspace="main"]) .hero {
 }
 
 @keyframes hero-glow-drift-a {
+        from {
+                transform: translate(-20px, -12px) scale(.88);
+                opacity: .72;
+        }
         to {
-                transform: translate(28px, 18px);
+                transform: translate(110px, 70px) scale(1.16);
+                opacity: 1;
         }
 }
 
 @keyframes hero-glow-drift-b {
+        from {
+                transform: translate(18px, 16px) scale(.9);
+                opacity: .7;
+        }
         to {
-                transform: translate(-24px, -16px);
+                transform: translate(-95px, -70px) scale(1.2);
+                opacity: 1;
+        }
+}
+
+@keyframes hero-glow-drift-c {
+        from {
+                transform: translate(22px, -10px) scale(.86);
+                opacity: .65;
+        }
+        to {
+                transform: translate(-78px, 66px) scale(1.18);
+                opacity: 1;
+        }
+}
+
+@keyframes hero-glow-drift-d {
+        from {
+                transform: translate(-18px, 14px) scale(.9);
+                opacity: .7;
+        }
+        to {
+                transform: translate(86px, -74px) scale(1.16);
+                opacity: 1;
         }
 }
 
@@ -1777,18 +1872,54 @@ hr {
                 grid-template-columns: 1fr;
         }
 
+        .layout-left {
+                grid-template-columns: 1fr;
+        }
+
         .layout-right {
                 padding-top: 0;
         }
 }
 
+/* Landscape desktop: use the available browser width for a two-column desktop. */
+@media (min-width: 1000px) and (min-aspect-ratio: 6/5) {
+        .layout {
+                grid-template-columns: minmax(0, 1fr);
+                max-width: none;
+        }
+
+        .page-container {
+                max-width: none;
+        }
+
+        #devlog {
+                max-width: none;
+        }
+
+        .layout-left {
+                grid-template-columns: minmax(0, 1fr);
+        }
+
+        body:not([data-workspace="main"]) .layout-left {
+                grid-template-columns: 1fr;
+        }
+
+        body:not([data-workspace="main"]) .layout-left > section {
+                grid-column: 1 / -1;
+        }
+
+        .layout-left > .hero {
+                grid-column: 1 / -1;
+        }
+}
+
 @media (max-width: 600px) {
         body {
-                padding: 16px;
+                padding: 12px;
         }
 
         section {
-                padding: 20px;
+                padding: 16px;
                 border-radius: 20px;
         }
 
@@ -1818,9 +1949,21 @@ hr {
         }
 }
 
+@media (max-width: 380px) {
+        .project-explorer__field,
+        .project-explorer__field--sort {
+                flex-basis: 100%;
+        }
+
+        .status-bar {
+                gap: 4px;
+                padding-inline: 6px;
+        }
+}
+
 html.is-compact body {
         padding: clamp(12px, 2vw, 28px);
-        padding-bottom: calc(clamp(12px, 2vw, 28px) + var(--status-bar-height));
+        padding-bottom: clamp(12px, 2vw, 28px);
 }
 
 html.is-compact .layout,
@@ -2352,14 +2495,16 @@ button:active {
 .project-explorer__grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        grid-auto-rows: 280px;
         gap: 12px;
 }
 
 .project-card {
-        display: grid;
-        align-content: start;
+        display: flex;
+        flex-direction: column;
         gap: 8px;
         min-width: 0;
+        height: 100%;
         padding: 16px;
         border: 1px solid var(--md-outline-variant);
         border-radius: var(--md-radius-medium);
@@ -2379,6 +2524,10 @@ button:active {
         font-size: 1rem;
         font-weight: 600;
         overflow-wrap: anywhere;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
 }
 
 .project-card__badge {
@@ -2395,38 +2544,26 @@ button:active {
         margin: 0;
         color: var(--md-on-surface-variant);
         font-size: 0.88rem;
-}
-
-.project-card__tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-}
-
-.project-card__tags li {
-        padding: 2px 8px;
-        border-radius: 999px;
-        background: var(--md-surface-container);
-        color: var(--md-on-surface-variant);
-        font-size: 0.72rem;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
 }
 
 .project-card__meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
+        display: -webkit-box;
         margin: 0;
         color: var(--md-on-surface-variant);
         font-size: 0.75rem;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
 }
 
 .project-card__actions {
         display: flex;
         gap: 8px;
-        margin-top: 4px;
+        margin-top: auto;
 }
 
 .project-card__actions a {
@@ -2453,7 +2590,7 @@ button:active {
 .project-card__reactions {
         display: flex;
         gap: 8px;
-        margin-top: 2px;
+        margin-top: 0;
 }
 
 .project-card__reaction {
@@ -2556,7 +2693,7 @@ button:active {
 
 #devlog {
         width: 100%;
-        max-width: 760px;
+        max-width: none;
         margin: 0 auto;
 }
 

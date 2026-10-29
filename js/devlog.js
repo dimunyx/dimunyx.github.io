@@ -15,6 +15,32 @@
 	   repository — nothing here is invented. */
 	const ENTRIES = [
 		{
+			id: "v035-arch-linux-backup",
+			date: "2026-10-29",
+			title: "v0.3.5 — Arch Linux Backup",
+			category: "Projects",
+			kind: "minor",
+			description: "The Projects workspace now features the Arch-Linux-Backup repository.",
+			changes: [
+				"Added Arch-Linux-Backup to the Linux category",
+			],
+		},
+		{
+			id: "v034-projects",
+			date: "2026-10-28",
+			title: "v0.3.4 — responsive layout and Projects refresh",
+			category: "Projects",
+			kind: "minor",
+			description: "The site layout and Projects workspace got a responsive refresh, with clearer repository cards and an animated hero.",
+			changes: [
+				"Added dimunyx, Noctalia and Bibata Modern Catppuccin Mocha Blue to the repository explorer",
+				"Added the Favorite filter and marked Umbriel and Noctalia as favorites",
+				"Made the layout adapt to wide and portrait screens; Devlog follows Social and fills the available width",
+				"Aligned Project cards in a responsive grid, with Open above likes and dislikes; removed tag chips",
+				"Added four animated accent circles to the hero",
+			],
+		},
+		{
 			id: "v033-supabase",
 			date: "2026-10-13",
 			title: "v0.3.3 — Supabase backend",
