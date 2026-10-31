@@ -15,6 +15,17 @@
 	   repository — nothing here is invented. */
 	const ENTRIES = [
 		{
+			id: "v036-help-update",
+			date: "2026-10-31",
+			title: "v0.3.6 — Help update",
+			category: "Website",
+			kind: "minor",
+			description: "Updated the site help to match the current available features.",
+			changes: [
+				"Removed the outdated telemetry dashboard shortcut from the Help instructions",
+			],
+		},
+		{
 			id: "v035-arch-linux-backup",
 			date: "2026-10-29",
 			title: "v0.3.5 — Arch Linux Backup",
