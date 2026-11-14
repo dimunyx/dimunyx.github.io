@@ -123,6 +123,101 @@
 		element("hero-devlog")?.addEventListener("click", () => {
 			DX.devlog.goTo();
 		});
+
+		wireHeroGlow();
+	}
+
+	/* Hero glow orbs lean away from the pointer and ripple when poked.
+	   Purely decorative: skip movement when motion is reduced or disabled. */
+	function wireHeroGlow() {
+		const hero = element("site-hero");
+		if (!hero) return;
+		const glows = Array.from(hero.querySelectorAll(".hero__glow"));
+		if (!glows.length) return;
+
+		const SHIFT = 20;
+		const DEPTH = [0.9, 0.6, 0.75, 1.05];
+		const pokeTimers = new WeakMap();
+		let frame = 0;
+		let pointer = null;
+
+		const clearGlow = () => {
+			pointer = null;
+			if (frame) {
+				window.cancelAnimationFrame(frame);
+				frame = 0;
+			}
+			hero.classList.remove("is-glow-active");
+			glows.forEach((glow) => {
+				glow.style.removeProperty("--glow-x");
+				glow.style.removeProperty("--glow-y");
+			});
+		};
+
+		const moveGlows = () => {
+			frame = 0;
+			if (!pointer || DX.motion.tier() !== "enabled") return;
+			const rect = hero.getBoundingClientRect();
+			if (!rect.width || !rect.height) return;
+			const nx = (pointer.x - rect.left) / rect.width - 0.5;
+			const ny = (pointer.y - rect.top) / rect.height - 0.5;
+			glows.forEach((glow, index) => {
+				const depth = DEPTH[index % DEPTH.length];
+				glow.style.setProperty("--glow-x", `${(-nx * SHIFT * depth).toFixed(2)}px`);
+				glow.style.setProperty("--glow-y", `${(-ny * SHIFT * depth).toFixed(2)}px`);
+			});
+		};
+
+		const poke = (glow) => {
+			const pending = pokeTimers.get(glow);
+			if (pending) window.clearTimeout(pending);
+			glow.classList.remove("is-poked");
+			void glow.offsetWidth;
+			glow.classList.add("is-poked");
+			pokeTimers.set(
+				glow,
+				window.setTimeout(() => {
+					glow.classList.remove("is-poked");
+					pokeTimers.delete(glow);
+				}, 660)
+			);
+		};
+
+		hero.addEventListener("pointermove", (event) => {
+			if (event.pointerType === "touch") return;
+			if (DX.motion.tier() !== "enabled") return;
+			pointer = { x: event.clientX, y: event.clientY };
+			hero.classList.add("is-glow-active");
+			if (!frame) frame = window.requestAnimationFrame(moveGlows);
+		});
+
+		hero.addEventListener("pointerleave", clearGlow);
+
+		hero.addEventListener("pointerdown", (event) => {
+			if (event.button !== 0) return;
+			if (!DX.motion.allowed()) return;
+			const rect = hero.getBoundingClientRect();
+			const x = event.clientX - rect.left;
+			const y = event.clientY - rect.top;
+			let nearest = null;
+			let nearestDistance = Infinity;
+			glows.forEach((glow) => {
+				const box = glow.getBoundingClientRect();
+				const cx = box.left + box.width / 2 - rect.left;
+				const cy = box.top + box.height / 2 - rect.top;
+				const distance = (cx - x) ** 2 + (cy - y) ** 2;
+				if (distance < nearestDistance) {
+					nearestDistance = distance;
+					nearest = glow;
+				}
+			});
+			if (nearest) poke(nearest);
+		});
+
+		DX.events.on("motion-changed", (tier) => {
+			if (tier !== "enabled") clearGlow();
+		});
+		DX.events.on("workspace-changed", clearGlow);
 	}
 
 	function loadVersion() {

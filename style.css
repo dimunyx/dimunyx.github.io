@@ -395,8 +395,21 @@ html[data-anim="reduced"] .desktop-context-menu {
         animation: none;
 }
 
-html[data-anim="reduced"] .hero__glow {
+html[data-anim="reduced"] .hero .hero__glow {
         animation: none;
+        transition: none;
+        translate: 0 0;
+        scale: 1;
+}
+
+html[data-anim="reduced"] .hero .hero__glow::after {
+        animation: none;
+}
+
+html[data-anim="disabled"] .hero .hero__glow {
+        transition: none;
+        translate: 0 0;
+        scale: 1;
 }
 
 html[data-anim="reduced"] .telegram-modal,
@@ -764,12 +777,41 @@ body:not([data-workspace="main"]) .hero {
 }
 
 .hero__glow {
+        --glow-x: 0px;
+        --glow-y: 0px;
+        --glow-tint: var(--md-primary);
         position: absolute;
         z-index: 0;
         width: 320px;
         height: 320px;
         border-radius: 50%;
         pointer-events: none;
+        translate: var(--glow-x) var(--glow-y);
+        scale: 1;
+        transition: translate 360ms cubic-bezier(.2, 0, 0, 1), scale 320ms cubic-bezier(.2, 0, 0, 1), filter 240ms ease;
+        will-change: translate, scale;
+}
+
+.hero.is-glow-active .hero__glow {
+        transition: scale 320ms cubic-bezier(.2, 0, 0, 1), filter 240ms ease;
+        scale: 1.06;
+        filter: brightness(1.16) saturate(1.06);
+}
+
+/* Ripple that plays when someone pokes the hero. */
+.hero__glow::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(circle, color-mix(in srgb, var(--glow-tint) 48%, transparent) 0%, transparent 62%);
+        opacity: 0;
+        scale: .6;
+        pointer-events: none;
+}
+
+.hero__glow.is-poked::after {
+        animation: hero-glow-poke 640ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .hero__glow--primary {
@@ -780,6 +822,7 @@ body:not([data-workspace="main"]) .hero {
 }
 
 .hero__glow--secondary {
+        --glow-tint: var(--md-secondary);
         right: -110px;
         bottom: -160px;
         background: radial-gradient(circle, color-mix(in srgb, var(--md-secondary) 26%, transparent) 0%, transparent 70%);
@@ -796,6 +839,7 @@ body:not([data-workspace="main"]) .hero {
 }
 
 .hero__glow--quaternary {
+        --glow-tint: var(--md-secondary);
         bottom: -190px;
         left: 24%;
         width: 280px;
@@ -915,6 +959,17 @@ body:not([data-workspace="main"]) .hero {
         to {
                 transform: translate(86px, -74px) scale(1.16);
                 opacity: 1;
+        }
+}
+
+@keyframes hero-glow-poke {
+        0% {
+                opacity: .85;
+                scale: .55;
+        }
+        100% {
+                opacity: 0;
+                scale: 1.5;
         }
 }
 
