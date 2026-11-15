@@ -23,6 +23,26 @@
         --status-bar-height: 46px;
 }
 
+/* Catppuccin Mocha Deep Blue (Noctalia palette: all accents in Mocha blue) */
+[data-theme="mocha-deep-blue"] {
+        color-scheme: dark;
+        --md-primary: #89b4fa;
+        --md-on-primary: #1e1e2e;
+        --md-primary-container: #313244;
+        --md-on-primary-container: #cdd6f4;
+        --md-secondary: #89b4fa;
+        --md-secondary-container: #45475a;
+        --md-on-secondary-container: #cdd6f4;
+        --md-surface: #1e1e2e;
+        --md-surface-container: #181825;
+        --md-surface-container-high: #242436;
+        --md-on-surface: #cdd6f4;
+        --md-on-surface-variant: #bac2de;
+        --md-outline: #6c7086;
+        --md-outline-variant: #45475a;
+        --md-scrim: #11111bcc;
+}
+
 /* Catppuccin Macchiato */
 [data-theme="macchiato"] {
         color-scheme: dark;

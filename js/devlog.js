@@ -17,14 +17,15 @@
 		{
 			id: "v037-hero-glow",
 			date: "2026-11-14",
-			title: "v0.3.7 — interactive hero and current setup",
+			title: "v0.3.7 — interactive hero and Deep Blue palette",
 			category: "Website",
 			kind: "minor",
-			description: "The hero's glowing orbs now react to the pointer, and the Using now card reflects the current Arch Linux setup.",
+			description: "The hero's glowing orbs now react to the pointer, a new Catppuccin Mocha Deep Blue palette joins the theme list, and Using now reflects the current Arch Linux setup.",
 			changes: [
 				"Hero glow orbs lean away from the pointer with layered parallax and brighten on hover",
 				"Clicking the hero sends a light ripple through the nearest orb; touch taps work too",
 				"The effects back off when reduced or disabled motion is enabled",
+				"Added the Catppuccin Mocha Deep Blue palette from the Noctalia setup",
 				"Using now switched from NixOS to Arch Linux and now shows the current hardware, kernel and packages",
 			],
 		},

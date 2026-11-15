@@ -8,9 +8,10 @@
 	const SETTINGS_SCHEMA = 2;
 	const LEGACY_KEYS = ["dimunyx-settings-v1", "dimunyx-layout-v1", "dimunyx-repo-stats-v1"];
 
-	const THEME_ORDER = ["mocha", "macchiato", "frappe", "latte", "gruvbox", "ayu", "adwaita", "kanagawa", "eldritch", "tokyo-night", "nord", "rose-pine", "dracula", "onedark", "monokai", "synthwave", "palenight", "github-dark", "rose-pine-dawn"];
+	const THEME_ORDER = ["mocha", "mocha-deep-blue", "macchiato", "frappe", "latte", "gruvbox", "ayu", "adwaita", "kanagawa", "eldritch", "tokyo-night", "nord", "rose-pine", "dracula", "onedark", "monokai", "synthwave", "palenight", "github-dark", "rose-pine-dawn"];
 	const THEME_LABELS = {
 		mocha: "Catppuccin Mocha",
+		"mocha-deep-blue": "Catppuccin Mocha Deep Blue",
 		macchiato: "Catppuccin Macchiato",
 		frappe: "Catppuccin Frappe",
 		latte: "Catppuccin Latte",
@@ -32,6 +33,7 @@
 	};
 	const THEME_ACCENTS = {
 		mocha: { blue: "#89b4fa", purple: "#cba6f7", green: "#a6e3a1", peach: "#fab387", red: "#f38ba8", yellow: "#f9e2af", black: "#11111b", white: "#ffffff" },
+		"mocha-deep-blue": { blue: "#89b4fa", purple: "#cba6f7", green: "#a6e3a1", peach: "#fab387", red: "#f38ba8", yellow: "#f9e2af", black: "#11111b", white: "#ffffff" },
 		macchiato: { blue: "#8aadf4", purple: "#c6a0f6", green: "#a6da95", peach: "#f5a97f", red: "#ed8796", yellow: "#eed49f", black: "#181926", white: "#ffffff" },
 		frappe: { blue: "#8caaee", purple: "#ca9ee6", green: "#a6d189", peach: "#ef9f76", red: "#e78284", yellow: "#e5c890", black: "#232634", white: "#ffffff" },
 		latte: { blue: "#1e66f5", purple: "#8839ef", green: "#40a02b", peach: "#fe640b", red: "#d20f39", yellow: "#df8e1d", black: "#11111b", white: "#dc8a78" },
@@ -54,6 +56,7 @@
 	/* A few extra swatch colours shown in the Palette workspace preview. */
 	const THEME_PREVIEW = {
 		mocha: ["#1e1e2e", "#313244", "#89b4fa", "#a6e3a1", "#f9e2af", "#f38ba8"],
+		"mocha-deep-blue": ["#1e1e2e", "#181825", "#89b4fa", "#a6e3a1", "#f9e2af", "#f38ba8"],
 		macchiato: ["#24273a", "#363a4f", "#8aadf4", "#a6da95", "#eed49f", "#ed8796"],
 		frappe: ["#303446", "#414559", "#8caaee", "#a6d189", "#e5c890", "#e78284"],
 		latte: ["#eff1f5", "#ccd0da", "#1e66f5", "#40a02b", "#df8e1d", "#d20f39"],
