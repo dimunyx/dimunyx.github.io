@@ -20,11 +20,13 @@
         --md-radius-medium: 16px;
         --md-radius-large: 24px;
         --md-motion: 220ms cubic-bezier(.2, 0, 0, 1);
-        --status-bar-height: 46px;
+        --status-bar-height: calc(46px + env(safe-area-inset-bottom, 0px));
+        --icon-filter: none;
+        --icon-hover-filter: brightness(0) saturate(100%);
 }
 
-/* Catppuccin Mocha Deep Blue (Noctalia palette: all accents in Mocha blue) */
-[data-theme="mocha-deep-blue"] {
+/* Abyssal (Catppuccin Mocha Deep Blue, Noctalia palette: all accents in Mocha blue) */
+[data-theme="abyssal"] {
         color-scheme: dark;
         --md-primary: #89b4fa;
         --md-on-primary: #1e1e2e;
@@ -101,6 +103,8 @@
         --md-outline: #9ca0b0;
         --md-outline-variant: #acb0be;
         --md-scrim: #11111bcc;
+        --icon-filter: invert(1);
+        --icon-hover-filter: brightness(0) saturate(100%) invert(1);
 }
 
 /* Gruvbox */
@@ -401,6 +405,8 @@
         --md-outline: #b6b1a8;
         --md-outline-variant: #d8d0c4;
         --md-scrim: #f2e9e1cc;
+        --icon-filter: invert(1);
+        --icon-hover-filter: brightness(0) saturate(100%) invert(1);
 }
 
 /* Animation preference set from Settings */
@@ -430,6 +436,11 @@ html[data-anim="disabled"] .hero .hero__glow {
         transition: none;
         translate: 0 0;
         scale: 1;
+}
+
+html[data-anim="reduced"] .hero__spark,
+html[data-anim="disabled"] .hero__spark {
+        display: none;
 }
 
 html[data-anim="reduced"] .telegram-modal,
@@ -463,6 +474,12 @@ html[data-anim="disabled"] *::after {
 
 * {
         box-sizing: border-box;
+}
+
+/* All asset icons are white SVG glyphs; on light themes they are inverted so
+   they stay visible against the light surfaces. */
+img[src$=".svg"] {
+        filter: var(--icon-filter);
 }
 
 /* Keep native scrolling and keyboard/touch behavior, with a site themed scrollbar. */
@@ -558,7 +575,7 @@ body {
 
 .reset-site:hover img,
 .reset-site:hover .reset-site__fallback {
-        filter: brightness(0) saturate(100%);
+        filter: var(--icon-hover-filter);
 }
 
 .reset-site img,
@@ -616,7 +633,7 @@ body {
 }
 
 .help-site:hover img {
-        filter: brightness(0) saturate(100%);
+        filter: var(--icon-hover-filter);
 }
 
 .desktop-context-menu[hidden] {
@@ -701,6 +718,11 @@ body {
 .desktop-context-menu__item:focus-visible {
         background: var(--md-primary);
         color: var(--md-on-primary);
+}
+
+.desktop-context-menu__item:hover img,
+.desktop-context-menu__item:focus-visible img {
+        filter: var(--icon-hover-filter);
 }
 
 .desktop-context-menu__item:hover {
@@ -808,14 +830,44 @@ body:not([data-workspace="main"]) .hero {
         pointer-events: none;
         translate: var(--glow-x) var(--glow-y);
         scale: 1;
-        transition: translate 360ms cubic-bezier(.2, 0, 0, 1), scale 320ms cubic-bezier(.2, 0, 0, 1), filter 240ms ease;
+        transition: scale 320ms cubic-bezier(.2, 0, 0, 1), filter 240ms ease;
         will-change: translate, scale;
 }
 
 .hero.is-glow-active .hero__glow {
-        transition: scale 320ms cubic-bezier(.2, 0, 0, 1), filter 240ms ease;
-        scale: 1.06;
-        filter: brightness(1.16) saturate(1.06);
+        scale: 1.08;
+        filter: brightness(1.22) saturate(1.08);
+}
+
+/* Site-wide click spark layer: the same burst as the hero, but fixed to the
+   viewport so it works anywhere on the page. Never takes pointer input. */
+.click-sparks {
+        position: fixed;
+        z-index: 2147483647;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        contain: strict;
+}
+
+html[data-anim="reduced"] .click-sparks,
+html[data-anim="disabled"] .click-sparks {
+        display: none;
+}
+
+/* Spark burst thrown from the pointer when the hero is clicked. */
+.hero__spark {
+        position: absolute;
+        z-index: 0;
+        width: var(--spark-size, 5px);
+        height: var(--spark-size, 5px);
+        margin: calc(var(--spark-size, 5px) * -0.5);
+        border-radius: 50%;
+        background: var(--md-primary);
+        box-shadow: 0 0 10px color-mix(in srgb, var(--md-primary) 80%, transparent);
+        opacity: 0;
+        pointer-events: none;
+        animation: hero-spark-fly 620ms cubic-bezier(.2, 0, 0, 1) forwards;
 }
 
 /* Ripple that plays when someone pokes the hero. */
@@ -990,6 +1042,20 @@ body:not([data-workspace="main"]) .hero {
         100% {
                 opacity: 0;
                 scale: 1.5;
+        }
+}
+
+@keyframes hero-spark-fly {
+        0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(.4);
+        }
+        15% {
+                opacity: 1;
+        }
+        100% {
+                opacity: 0;
+                transform: translate(var(--spark-dx, 0), var(--spark-dy, 0)) scale(.15);
         }
 }
 
@@ -1882,6 +1948,13 @@ hr {
         transform: translateY(-1px);
 }
 
+.inspect-modal__link:hover img,
+.inspect-modal__link:focus-visible img,
+.inspect-modal__copy:hover img,
+.inspect-modal__copy:focus-visible img {
+        filter: var(--icon-hover-filter);
+}
+
 .telegram-modal__dialog img {
         display: block;
         width: min(70vw, 340px);
@@ -1902,21 +1975,26 @@ hr {
 
 .telegram-modal__close {
         position: absolute;
+        z-index: 3;
         top: 14px;
         right: 14px;
         display: grid;
         width: 40px;
         height: 40px;
         place-items: center;
-        border: 0;
+        border: 1px solid var(--md-outline-variant);
         border-radius: 50%;
-        background: transparent;
+        background: var(--md-surface-container);
+        color: var(--md-on-surface);
+        box-shadow: 0 2px 8px #0000002e;
         cursor: pointer;
-        transition: background-color var(--md-motion), transform var(--md-motion), scale 120ms cubic-bezier(.2, 0, 0, 1);
+        transition: background-color var(--md-motion), color var(--md-motion), border-color var(--md-motion), transform var(--md-motion), scale 120ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .telegram-modal__close:hover {
+        border-color: transparent;
         background: var(--md-primary);
+        color: var(--md-on-primary);
         transform: rotate(90deg);
 }
 
@@ -1928,7 +2006,7 @@ hr {
 }
 
 .telegram-modal__close:hover img {
-        filter: brightness(0) saturate(100%);
+        filter: var(--icon-hover-filter);
 }
 
 @keyframes section-enter {
@@ -1991,6 +2069,8 @@ hr {
 @media (max-width: 600px) {
         body {
                 padding: 12px;
+                padding-left: max(12px, env(safe-area-inset-left, 0px));
+                padding-right: max(12px, env(safe-area-inset-right, 0px));
         }
 
         section {
@@ -2002,13 +2082,34 @@ hr {
                 padding: 26px 16px;
         }
 
+        .hero__glow {
+                width: 240px;
+                height: 240px;
+        }
+
+        .hero__glow--tertiary {
+                width: 200px;
+                height: 200px;
+        }
+
+        .hero__glow--quaternary {
+                width: 210px;
+                height: 210px;
+        }
+
         section ul li,
         section ul.social-links li {
                 flex-basis: calc(33.333% - 12px);
         }
 
+        .telegram-modal {
+                padding: 10px;
+        }
+
         .telegram-modal__dialog {
-                padding: 24px 18px;
+                max-height: calc(100dvh - 20px);
+                padding: 20px 16px;
+                border-radius: 22px;
         }
 
         .settings-grid {
@@ -2019,20 +2120,23 @@ hr {
                 grid-column: auto;
         }
 
+        .settings-color-field {
+                flex-wrap: wrap;
+        }
+
+        .settings-color-field .custom-select {
+                flex-basis: 100%;
+                min-width: 0;
+                max-width: none;
+        }
+
         .experience-columns {
                 grid-template-columns: 1fr;
         }
-}
 
-@media (max-width: 380px) {
-        .project-explorer__field,
-        .project-explorer__field--sort {
-                flex-basis: 100%;
-        }
-
-        .status-bar {
-                gap: 4px;
-                padding-inline: 6px;
+        .using-now-modal__content {
+                padding: 10px;
+                font-size: clamp(0.44rem, 1.7vw, 0.6rem);
         }
 }
 
@@ -2114,6 +2218,7 @@ button:active {
         gap: 10px;
         min-height: var(--status-bar-height);
         padding: 5px clamp(8px, 2vw, 16px);
+        padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px));
         border-top: 1px solid var(--md-outline-variant);
         background: var(--md-surface-container-high);
         color: var(--md-on-surface-variant);
@@ -2169,7 +2274,7 @@ button:active {
 
 .status-bar__clock:hover img,
 .status-bar__clock:focus-visible img {
-        filter: brightness(0) saturate(100%);
+        filter: var(--icon-hover-filter);
 }
 
 .clock-menu {
@@ -2262,7 +2367,7 @@ button:active {
 
 .status-bar__btn:hover img,
 .status-bar__btn:focus-visible img {
-        filter: brightness(0) saturate(100%);
+        filter: var(--icon-hover-filter);
 }
 
 .status-bar__btn:hover,
@@ -2278,40 +2383,51 @@ button:active {
 
 .workspace-switcher__btn {
         display: inline-flex;
-        align-items: center;
-        gap: 6px;
+        min-width: 30px;
         min-height: 30px;
-        padding: 4px 10px;
-        border: 1px solid transparent;
+        align-items: center;
+        justify-content: center;
+        padding: 3px 11px;
+        border: 0;
         border-radius: 999px;
         background: var(--md-secondary-container);
         color: var(--md-on-secondary-container);
         font: inherit;
-        font-size: 0.82rem;
+        font-size: 0.9rem;
+        font-weight: 600;
         line-height: 1;
         cursor: pointer;
-        transition: background-color var(--md-motion), color var(--md-motion);
+        transition: background-color var(--md-motion), color var(--md-motion), scale 120ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .workspace-switcher__btn kbd {
-        padding: 1px 4px;
-        border-radius: 4px;
-        background: #00000026;
-        font-family: inherit;
-        font-size: 0.7rem;
-        opacity: 0.8;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        font: inherit;
+        font-size: inherit;
+        opacity: 1;
 }
 
 .workspace-switcher__btn[aria-pressed="true"] {
         background: var(--md-primary);
         color: var(--md-on-primary);
-        font-weight: 600;
+        font-weight: 700;
 }
 
 .workspace-switcher__btn:hover,
 .workspace-switcher__btn:focus-visible {
         background: var(--md-primary);
         color: var(--md-on-primary);
+}
+
+.workspace-switcher__btn:active {
+        scale: .9;
+}
+
+.workspace-switcher__btn:focus-visible {
+        outline: 2px solid var(--md-primary);
+        outline-offset: 2px;
 }
 
 /* ------------------------------------------------------------------ *
@@ -2369,6 +2485,9 @@ button:active {
         position: static;
         width: 32px;
         height: 32px;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
 }
 
 .terminal-modal__dialog .terminal__close img {
@@ -2967,14 +3086,112 @@ button:active {
         }
 }
 
+/* Phone tuning: cards, palette, devlog and status bar. */
 @media (max-width: 600px) {
-        #status-date {
-                display: none;
+        .project-explorer input[type="search"] {
+                font-size: 16px;
+        }
+
+        .palette-list {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+
+        .devlog__timeline {
+                padding-left: 24px;
+        }
+
+        .devlog-entry__marker {
+                left: -21px;
+        }
+
+        .devlog-entry--minor .devlog-entry__marker {
+                left: -19px;
+        }
+
+        .terminal-modal__dialog {
+                height: min(78dvh, 520px);
+        }
+
+        .terminal__input {
+                font-size: 16px;
+        }
+}
+
+@media (max-width: 480px) {
+        .project-explorer__grid {
+                grid-template-columns: 1fr;
+                grid-auto-rows: auto;
+        }
+
+        .project-card {
+                min-height: 240px;
         }
 }
 
 @media (max-width: 380px) {
+        .project-explorer__field,
+        .project-explorer__field--sort {
+                flex-basis: 100%;
+        }
+
+        .status-bar {
+                gap: 4px;
+                padding-inline: 6px;
+        }
+
+        .status-bar__right {
+                gap: 4px;
+        }
+
+        .status-bar__time {
+                display: none;
+        }
+
+        .status-bar__clock {
+                width: 36px;
+                height: 36px;
+                justify-content: center;
+                padding: 0;
+        }
+
         .workspace-switcher__btn {
-                padding: 4px 8px;
+                min-width: 34px;
+                padding: 2px 8px;
+        }
+}
+
+/* Comfortable touch targets on phones and tablets. */
+@media (pointer: coarse) {
+        :root {
+                --status-bar-height: calc(52px + env(safe-area-inset-bottom, 0px));
+        }
+
+        .status-bar__btn {
+                width: 40px;
+                height: 40px;
+        }
+
+        .status-bar__clock {
+                min-width: 40px;
+                min-height: 40px;
+        }
+
+        .workspace-switcher__btn {
+                min-width: 40px;
+                min-height: 40px;
+        }
+
+        .hero__btn {
+                min-height: 46px;
+        }
+
+        .project-chip,
+        .settings-action {
+                min-height: 42px;
+        }
+
+        .project-card__actions a,
+        .project-card__reaction {
+                min-height: 42px;
         }
 }

@@ -15,6 +15,25 @@
 	   repository — nothing here is invented. */
 	const ENTRIES = [
 		{
+			id: "v040-site-sparks",
+			date: "2026-11-17",
+			title: "v0.4.0 — site-wide sparks and Abyssal",
+			category: "Website",
+			kind: "major",
+			description: "The hero click effect is now everywhere: every click and tap across the site throws the same spark burst. This release also brings the reworked hero, visible close buttons on every theme, the Abyssal palette and a full phone pass.",
+			changes: [
+				"The spark burst from the hero now fires on every click and tap across the site, dialogs included",
+				"Hero orbs follow the pointer with spring physics, get shoved by clicks and ripple when poked",
+				"Hero clicks throw a 9-spark burst from the pointer; touch taps work too",
+				"All click effects back off when reduced or disabled motion is enabled",
+				"Workspace buttons keep their pill, but the digit no longer sits on its own keycap",
+				"Modal close buttons stay visible on every theme; light themes invert the white SVG icons",
+				"The development warning popup now has the same round close cross as the other dialogs",
+				"The Catppuccin Mocha Deep Blue palette is now called Abyssal",
+				"Phone pass: safe-area spacing, larger touch targets, single-column project cards and tighter modals",
+			],
+		},
+		{
 			id: "v037-hero-glow",
 			date: "2026-11-14",
 			title: "v0.3.7 — interactive hero and Deep Blue palette",

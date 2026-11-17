@@ -2,7 +2,7 @@
 <html lang="en" data-theme="mocha" data-anim="enabled">
 	<head>
 		<meta charset="UTF-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 		<title>dimunyx</title>
 		<link rel="icon" type="image/png" href="assets/logo.png"/>
 		<link rel="stylesheet" href="style.css"/>
@@ -184,7 +184,7 @@
 							<span>Theme</span>
 							<select id="settings-theme">
 								<option value="mocha">Catppuccin Mocha</option>
-								<option value="mocha-deep-blue">Catppuccin Mocha Deep Blue</option>
+								<option value="abyssal">Abyssal</option>
 								<option value="macchiato">Catppuccin Macchiato</option>
 								<option value="frappe">Catppuccin Frappe</option>
 								<option value="latte">Catppuccin Latte</option>
@@ -280,6 +280,7 @@
 		</div>
 		<div id="test-warning-modal" class="telegram-modal" hidden aria-hidden="true">
 			<div class="telegram-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="test-warning-modal-title" tabindex="-1">
+				<button class="telegram-modal__close" type="button" aria-label="Close"><img src="assets/close.svg" alt=""/></button>
 				<h2 id="test-warning-modal-title">Warning</h2>
 				<p>This website is under development.</p>
 				<p class="test-warning-modal__version">v…</p>
@@ -388,9 +389,9 @@
 		<footer class="status-bar" id="status-bar">
 			<div class="status-bar__group">
 				<div class="workspace-switcher" id="workspace-switcher" role="group" aria-label="Workspaces">
-					<button class="workspace-switcher__btn" type="button" data-workspace="main" aria-pressed="true" title="Main"><kbd>1</kbd></button>
-					<button class="workspace-switcher__btn" type="button" data-workspace="projects" aria-pressed="false" title="Projects"><kbd>2</kbd></button>
-					<button class="workspace-switcher__btn" type="button" data-workspace="design" aria-pressed="false" title="Design"><kbd>3</kbd></button>
+					<button class="workspace-switcher__btn" type="button" data-workspace="main" aria-pressed="true" aria-label="Main workspace" title="Main"><kbd>1</kbd></button>
+					<button class="workspace-switcher__btn" type="button" data-workspace="projects" aria-pressed="false" aria-label="Projects workspace" title="Projects"><kbd>2</kbd></button>
+					<button class="workspace-switcher__btn" type="button" data-workspace="design" aria-pressed="false" aria-label="Design workspace" title="Design"><kbd>3</kbd></button>
 				</div>
 			</div>
 			<div class="status-bar__group status-bar__right">
