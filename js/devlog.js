@@ -11,9 +11,30 @@
 	const KIND_LABELS = { major: "Major", minor: "Minor" };
 	const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+	/* Tagged releases are also pulled from the GitHub API, so a new version shows
+	   up here without editing this file. Curated entries always win: if a version
+	   is already described above, the generated one is dropped. */
+	const REPO = "dimunyx/dimunyx.github.io";
+	const RELEASES_URL = `https://api.github.com/repos/${REPO}/releases?per_page=100`;
+	const RELEASES_CACHE_KEY = "dimunyx-devlog-releases-v1";
+	const RELEASES_CACHE_TTL = 6 * 60 * 60 * 1000;
+
 	/* Every date and change below is taken from the real git history of this
 	   repository — nothing here is invented. */
 	const ENTRIES = [
+		{
+			id: "v041-direct-webring",
+			date: "2026-11-18",
+			title: "v0.4.1 — direct webring neighbours",
+			category: "Linux",
+			kind: "minor",
+			description: "A small maintenance release: the webring menu now links straight to the neighbouring sites instead of going through the ring redirects.",
+			changes: [
+				"Previous now opens ginkogruen.net directly instead of the nixwebr.ing previous redirect",
+				"Next now opens teaboi.xyz directly instead of the nixwebr.ing next redirect",
+				"Random and the Nix Webring badge still go through nixwebr.ing",
+			],
+		},
 		{
 			id: "v040-site-sparks",
 			date: "2026-11-17",
@@ -236,6 +257,7 @@
 	const state = { category: "all" };
 	const refs = {};
 	let observer = null;
+	let autoEntries = [];
 
 	function cacheRefs() {
 		refs.filters = element("devlog-filters");
@@ -250,8 +272,190 @@
 		return `${MONTHS[month - 1]} ${day}, ${year}`;
 	}
 
+	function versionOf(entry) {
+		const fromId = String(entry?.id || "").match(/^auto-v(\d+\.\d+\.\d+)$/);
+		if (fromId) return fromId[1];
+		const match = String(entry?.title || "").match(/v(\d+\.\d+\.\d+)/);
+		return match ? match[1] : null;
+	}
+
+	function curatedVersions() {
+		const versions = new Set();
+		for (const entry of ENTRIES) {
+			const version = versionOf(entry);
+			if (version) versions.add(version);
+		}
+		return versions;
+	}
+
+	function stripReleaseNoise(line) {
+		return String(line)
+			.replace(/\s+by @[\w-]+(?:\s+in\s+https?:\/\/\S+)?\s*$/i, "")
+			.replace(/\s*\(#\d+\)\s*$/, "")
+			.replace(/^[a-z]+(?:\([^)]*\))?!?:\s+/, "")
+			.trim()
+			.replace(/^[a-z]/, (char) => char.toUpperCase());
+	}
+
+	function changesFromBody(body) {
+		const changes = [];
+		let inChanges = false;
+		for (const raw of String(body || "").split(/\r?\n/)) {
+			const line = raw.trim();
+			if (/^#{1,6}\s/.test(line)) {
+				inChanges = /what'?s changed/i.test(line);
+				continue;
+			}
+			if (!inChanges) continue;
+			const match = line.match(/^[*-]\s+(.+)$/);
+			if (!match) continue;
+			const change = stripReleaseNoise(match[1]);
+			if (!change || /^version\(/i.test(change) || /^merge\b/i.test(change)) continue;
+			changes.push(change);
+		}
+		return changes;
+	}
+
+	function entryFromRelease(release) {
+		const tag = String(release?.tag_name || "").replace(/^v/i, "").trim();
+		if (!/^\d+\.\d+\.\d+$/.test(tag)) return null;
+
+		const changes = changesFromBody(release.body);
+		const [major, minor] = tag.split(".").map(Number);
+		const summary = changes[0] ? changes[0].slice(0, 72) : "GitHub release";
+		const releaseName = String(release.name || "").trim();
+		let titled = `v${tag} — ${summary}`;
+		if (releaseName && releaseName !== tag && releaseName !== `v${tag}`) {
+			const cleaned = releaseName.replace(/^v?\d+\.\d+\.\d+\s*[—:-]?\s*/, "").trim();
+			if (cleaned) titled = `v${tag} — ${cleaned}`;
+		}
+
+		return {
+			id: `auto-v${tag}`,
+			date: String(release.published_at || release.created_at || "").slice(0, 10),
+			title: titled,
+			category: "Website",
+			kind: major === 0 && minor === 0 ? "major" : "minor",
+			description: changes.length
+				? "Synced from the GitHub release notes. A curated entry takes priority whenever both exist for the same version."
+				: "Synced from a GitHub release that was published without generated notes.",
+			changes,
+		};
+	}
+
+	function compareHead(release) {
+		const match = String(release?.body || "").match(/\/compare\/([^\s)]+)/i);
+		return match ? match[1] : null;
+	}
+
+	function commitsFromCompare(data) {
+		if (!Array.isArray(data?.commits)) return [];
+		const changes = [];
+		for (const commit of data.commits) {
+			const subject = stripReleaseNoise(String(commit?.commit?.message || "").split("\n")[0]);
+			if (!subject || /^version\(/i.test(subject) || /^merge\b/i.test(subject)) continue;
+			changes.push(subject);
+		}
+		return changes;
+	}
+
+	function loadCompareChanges(release, entry) {
+		const head = compareHead(release);
+		if (!head) return Promise.resolve(false);
+		const url = `https://api.github.com/repos/${REPO}/compare/${head}`;
+		return fetch(url, { headers: { Accept: "application/vnd.github+json" } })
+			.then((response) => {
+				if (!response.ok) throw new Error(`GitHub compare answered ${response.status}`);
+				return response.json();
+			})
+			.then((data) => {
+				const changes = commitsFromCompare(data);
+				if (!changes.length) return false;
+				entry.changes = changes.slice(0, 12);
+				entry.description = "Synced from the commits between releases on GitHub. A curated entry takes priority whenever both exist for the same version.";
+				if (entry.title.endsWith("— GitHub release")) {
+					entry.title = entry.title.replace(/— GitHub release$/, `— ${changes[0].slice(0, 72)}`);
+				}
+				return true;
+			})
+			.catch((error) => {
+				console.warn("[dimunyx] devlog compare skipped", error);
+				return false;
+			});
+	}
+
+	function readReleasesCache() {
+		try {
+			const raw = window.localStorage.getItem(RELEASES_CACHE_KEY);
+			if (!raw) return null;
+			const parsed = JSON.parse(raw);
+			if (!parsed || !Array.isArray(parsed.releases)) return null;
+			if (Date.now() - Number(parsed.savedAt) > RELEASES_CACHE_TTL) return null;
+			return parsed.releases;
+		} catch (error) {
+			return null;
+		}
+	}
+
+	function writeReleasesCache(releases) {
+		try {
+			window.localStorage.setItem(RELEASES_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), releases }));
+		} catch (error) {
+			/* Storage can be unavailable or full; the devlog still works without it. */
+		}
+	}
+
+	function useReleases(releases) {
+		const curated = curatedVersions();
+		const pairs = releases
+			.map((release) => ({ release, entry: entryFromRelease(release) }))
+			.filter((pair) => pair.entry && !curated.has(versionOf(pair.entry)));
+		autoEntries = pairs.map((pair) => pair.entry);
+		render();
+
+		const pending = pairs
+			.filter((pair) => !pair.entry.changes.length && compareHead(pair.release))
+			.map((pair) => loadCompareChanges(pair.release, pair.entry));
+		if (!pending.length) return;
+		Promise.all(pending).then((updated) => {
+			if (updated.some(Boolean)) render();
+		});
+	}
+
+	function loadReleases() {
+		const cached = readReleasesCache();
+		if (cached) {
+			useReleases(cached);
+			return;
+		}
+		if (typeof fetch !== "function") return;
+
+		fetch(RELEASES_URL, { headers: { Accept: "application/vnd.github+json" }, cache: "no-cache" })
+			.then((response) => {
+				if (!response.ok) throw new Error(`GitHub API answered ${response.status}`);
+				return response.json();
+			})
+			.then((releases) => {
+				if (!Array.isArray(releases)) return;
+				writeReleasesCache(releases);
+				useReleases(releases);
+			})
+			.catch((error) => {
+				console.warn("[dimunyx] devlog releases skipped", error);
+			});
+	}
+
+	function mergedEntries() {
+		const curated = curatedVersions();
+		const generated = autoEntries.filter((entry) => {
+			const version = versionOf(entry);
+			return version && !curated.has(version);
+		});
+		return [...ENTRIES, ...generated];
+	}
+
 	function sortedEntries() {
-		return [...ENTRIES].sort((a, b) => b.date.localeCompare(a.date));
+		return mergedEntries().sort((a, b) => b.date.localeCompare(a.date));
 	}
 
 	function matches(entry) {
@@ -397,7 +601,8 @@
 		DX.events.on("settings-changed", syncMotion);
 
 		render();
+		loadReleases();
 	}
 
-	DX.devlog = { init, goTo, entries: () => ENTRIES };
+	DX.devlog = { init, goTo, entries: () => sortedEntries() };
 })();
