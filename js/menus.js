@@ -9,6 +9,7 @@
 	let contextSection = null;
 	let inspectedHref = window.location.href;
 	let actionTrigger = null;
+	let workspaceTrigger = null;
 	let returnFocus = null;
 	const closeTimers = new WeakMap();
 
@@ -16,6 +17,8 @@
 		refs.desktop = element("desktop-context-menu");
 		refs.sectionMode = element("section-mode-menu");
 		refs.body = element("body-context-menu");
+		refs.workspaceMenu = element("workspace-menu");
+		refs.workspaceMenuFlux = element("workspace-menu-flux");
 		refs.clockMenu = element("clock-menu");
 		refs.clockMenuDate = element("clock-menu-date");
 		refs.openTarget = element("open-context-target");
@@ -67,13 +70,23 @@
 	}
 
 	function anyOpen() {
-		return [refs.desktop, refs.sectionMode, refs.body, refs.clockMenu].some((menu) => menu && (!menu.hidden || menu.classList.contains("is-closing")));
+		return [refs.desktop, refs.sectionMode, refs.body, refs.workspaceMenu, refs.clockMenu].some(
+			(menu) => menu && (!menu.hidden || menu.classList.contains("is-closing")),
+		);
+	}
+
+	function closeWorkspaceMenu() {
+		hide(refs.workspaceMenu);
+		if (!workspaceTrigger) return;
+		workspaceTrigger.setAttribute("aria-expanded", "false");
+		workspaceTrigger = null;
 	}
 
 	function closeAll() {
 		hide(refs.desktop);
 		hide(refs.sectionMode);
 		hide(refs.body);
+		closeWorkspaceMenu();
 		hide(refs.clockMenu);
 		contextSection = null;
 		actionTrigger = null;
@@ -95,6 +108,21 @@
 
 	function updateLayoutLabel() {
 		if (refs.layoutValue) refs.layoutValue.textContent = DX.layout.layoutLabel();
+	}
+
+	function openWorkspaceMenu(trigger, event) {
+		if (!refs.workspaceMenu) return;
+		if (!refs.workspaceMenu.hidden) {
+			closeWorkspaceMenu();
+			return;
+		}
+		closeAll();
+		workspaceTrigger = trigger;
+		trigger?.setAttribute("aria-expanded", "true");
+		returnFocus = trigger;
+		const rect = trigger?.getBoundingClientRect?.();
+		position(refs.workspaceMenu, rect ? { clientX: rect.left, clientY: rect.top } : event);
+		refs.workspaceMenuFlux?.focus();
 	}
 
 	function openInspect() {
@@ -232,11 +260,19 @@
 			if (!refs.desktop.hidden && !refs.desktop.contains(event.target)) closeDesktop();
 			if (!refs.sectionMode.hidden && !refs.sectionMode.contains(event.target)) closeSectionMode();
 			if (!refs.body.hidden && !refs.body.contains(event.target)) closeBody();
+			if (
+				refs.workspaceMenu &&
+				!refs.workspaceMenu.hidden &&
+				!refs.workspaceMenu.contains(event.target) &&
+				!event.target.closest?.("[data-workspace-menu]")
+			) {
+				closeWorkspaceMenu();
+			}
 			if (refs.clockMenu && !refs.clockMenu.hidden && !refs.clockMenu.contains(event.target)) hide(refs.clockMenu);
 		});
 
 		/* Clicking any menu item dismisses the menu it belongs to. */
-		for (const menu of [refs.desktop, refs.sectionMode, refs.body, refs.clockMenu]) {
+		for (const menu of [refs.desktop, refs.sectionMode, refs.body, refs.workspaceMenu, refs.clockMenu]) {
 			if (!menu) continue;
 			menu.addEventListener("click", () => {
 				closeAll();
@@ -264,6 +300,13 @@
 			closeSectionMode();
 		});
 
+		refs.workspaceMenuFlux?.addEventListener("click", () => {
+			closeAll();
+			DX.workspaces.switchTo("flux");
+		});
+
+		DX.events.on("workspace-changed", closeWorkspaceMenu);
+
 		refs.ownerLink.addEventListener("click", closeBody);
 		refs.siteInfo.addEventListener("click", closeBody);
 
@@ -280,4 +323,5 @@
 	}
 
 	DX.initMenus = init;
+	DX.menus = { openWorkspaceMenu };
 })();

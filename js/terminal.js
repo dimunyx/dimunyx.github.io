@@ -158,7 +158,7 @@
 			print(`  ${marker} ${workspace.id.padEnd(11)} ${workspace.sections.length} sections`);
 		}
 		print("");
-		print("Switch with `workspace <id>` or Ctrl+1…3.", "term-line--muted");
+		print("Switch with `workspace <id>` or Ctrl+1…4.", "term-line--muted");
 	});
 
 	command("workspace", "switch workspace (workspace <id>)", (args) => {

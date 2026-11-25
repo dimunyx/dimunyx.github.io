@@ -28,6 +28,17 @@
 			license: null,
 		},
 		{
+			id: "Flux",
+			name: "Flux",
+			url: "https://github.com/dimunyx/Flux",
+			homepage: null,
+			workspace: "flux",
+			description: "Flux is a DE-independent Linux software center. One interface. Every package manager.",
+			category: "Linux",
+			languages: ["C++", "CMake", "Nix"],
+			license: "GPL-3.0",
+		},
+		{
 			id: "dimfetch",
 			name: "dimfetch",
 			url: "https://github.com/dimunyx/dimfetch",
@@ -380,6 +391,17 @@
 		openLink.textContent = "Open ↗";
 
 		actions.append(openLink);
+
+		if (project.workspace) {
+			const workspaceButton = document.createElement("button");
+			workspaceButton.type = "button";
+			workspaceButton.textContent = "Workspace";
+			workspaceButton.addEventListener("click", () => {
+				DX.workspaces.switchTo(project.workspace);
+			});
+			actions.append(workspaceButton);
+		}
+
 		card.append(actions);
 
 		card.append(buildReactions(project));

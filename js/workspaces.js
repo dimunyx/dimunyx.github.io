@@ -23,6 +23,12 @@
 			sections: ["palette"],
 			default: { left: ["palette"], right: [], page: [] },
 		},
+		{
+			id: "flux",
+			label: "Flux",
+			sections: ["flux"],
+			default: { left: ["flux"], right: [], page: [] },
+		},
 	];
 
 	DX.WORKSPACES = WORKSPACES;
@@ -74,7 +80,14 @@
 	function init() {
 		switcherButtons = [...document.querySelectorAll("[data-workspace]")];
 		switcherButtons.forEach((button) => {
-			button.addEventListener("click", () => switchTo(button.dataset.workspace));
+			button.addEventListener("click", (event) => {
+				if (button.dataset.workspaceMenu && DX.menus?.openWorkspaceMenu) {
+					event.preventDefault();
+					DX.menus.openWorkspaceMenu(button, event);
+					return;
+				}
+				switchTo(button.dataset.workspace);
+			});
 		});
 
 		document.addEventListener("keydown", (event) => {

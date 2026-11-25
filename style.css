@@ -2287,6 +2287,11 @@ button:active {
         gap: 4px;
 }
 
+.workspace-menu {
+        width: 200px;
+        gap: 4px;
+}
+
 .clock-menu__row {
         display: flex;
         align-items: center;
@@ -2760,23 +2765,29 @@ button:active {
         margin-top: auto;
 }
 
-.project-card__actions a {
+.project-card__actions a,
+.project-card__actions button {
         display: inline-flex;
         flex: 1 1 auto;
         min-height: 36px;
         align-items: center;
         justify-content: center;
         padding: 6px 12px;
+        border: 0;
         border-radius: 999px;
         background: var(--md-secondary-container);
         color: var(--md-on-secondary-container);
+        font: inherit;
         font-size: 0.85rem;
         text-decoration: none;
+        cursor: pointer;
         transition: background-color var(--md-motion), color var(--md-motion);
 }
 
 .project-card__actions a:hover,
-.project-card__actions a:focus-visible {
+.project-card__actions a:focus-visible,
+.project-card__actions button:hover,
+.project-card__actions button:focus-visible {
         background: var(--md-primary);
         color: var(--md-on-primary);
 }
@@ -2879,6 +2890,230 @@ button:active {
         margin: 8px 0 0;
         color: var(--md-on-surface-variant);
         font-size: 0.8rem;
+}
+
+/* ------------------------------------------------------------------ *
+ * Flux workspace
+ * ------------------------------------------------------------------ */
+
+#flux {
+        width: 100%;
+}
+
+.flux-hero {
+        display: grid;
+        gap: 10px;
+}
+
+.flux-hero__top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+}
+
+.flux-mark {
+        display: grid;
+        width: 46px;
+        height: 46px;
+        place-items: center;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--md-primary), var(--md-secondary));
+        color: var(--md-on-primary);
+        font-size: 1.35rem;
+        font-weight: 700;
+        line-height: 1;
+}
+
+.flux-badge {
+        padding: 4px 11px;
+        border-radius: 999px;
+        background: var(--md-secondary-container);
+        color: var(--md-on-secondary-container);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+}
+
+.flux-badge--status {
+        background: var(--md-primary-container);
+        color: var(--md-on-primary-container);
+}
+
+.flux-hero h2 {
+        margin: 2px 0 0;
+}
+
+.flux-tagline {
+        margin: 0;
+        color: var(--md-primary);
+        font-size: 1.05rem;
+        font-weight: 600;
+}
+
+.flux-lead {
+        margin: 0;
+        color: var(--md-on-surface-variant);
+        font-size: 0.92rem;
+        line-height: 1.55;
+}
+
+.flux-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+}
+
+.flux-action {
+        display: inline-flex;
+        min-height: 40px;
+        flex: 1 1 150px;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        border: 0;
+        border-radius: 999px;
+        background: var(--md-secondary-container);
+        color: var(--md-on-secondary-container);
+        font: inherit;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color var(--md-motion), color var(--md-motion), transform var(--md-motion);
+}
+
+.flux-action:hover,
+.flux-action:focus-visible {
+        background: var(--md-primary);
+        color: var(--md-on-primary);
+        transform: translateY(-1px);
+}
+
+.flux-action--filled {
+        background: var(--md-primary);
+        color: var(--md-on-primary);
+}
+
+.flux-action--filled:hover,
+.flux-action--filled:focus-visible {
+        background: var(--md-secondary);
+        color: var(--md-on-primary);
+}
+
+.flux-facts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 8px;
+        margin-top: 14px;
+}
+
+.flux-fact {
+        padding: 10px 13px;
+        border-radius: var(--md-radius-small);
+        background: var(--md-surface-container-high);
+}
+
+.flux-fact__label {
+        display: block;
+        color: var(--md-on-surface-variant);
+        font-size: 0.66rem;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        opacity: 0.75;
+}
+
+.flux-fact__value {
+        display: block;
+        margin-top: 2px;
+        color: var(--md-on-surface);
+        font-size: 0.84rem;
+}
+
+.flux-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+}
+
+.flux-feature {
+        padding: 14px;
+        border: 1px solid var(--md-outline-variant);
+        border-radius: var(--md-radius-medium);
+        background: var(--md-surface-container-high);
+}
+
+.flux-feature h3,
+.flux-install h3 {
+        margin: 0 0 6px;
+        color: var(--md-on-surface);
+        font-size: 0.94rem;
+        font-weight: 600;
+}
+
+.flux-feature p {
+        margin: 0;
+        color: var(--md-on-surface-variant);
+        font-size: 0.82rem;
+        line-height: 1.45;
+}
+
+.flux-install {
+        margin-top: 16px;
+        padding: 16px;
+        border-radius: var(--md-radius-medium);
+        background: var(--md-primary-container);
+        color: var(--md-on-primary-container);
+}
+
+.flux-install h3 {
+        color: var(--md-on-primary-container);
+}
+
+.flux-install p {
+        margin: 0;
+        color: var(--md-on-primary-container);
+        font-size: 0.84rem;
+        line-height: 1.5;
+        opacity: 0.88;
+}
+
+.flux-code {
+        margin: 8px 0 10px;
+        padding: 10px 12px;
+        overflow-x: auto;
+        border-radius: var(--md-radius-small);
+        background: var(--md-surface);
+        color: var(--md-on-surface);
+        font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+        font-size: 0.82rem;
+        line-height: 1.4;
+}
+
+.flux-install code {
+        padding: 1px 5px;
+        border-radius: 6px;
+        background: var(--md-surface-container-high);
+        color: var(--md-on-surface);
+        font-size: 0.9em;
+}
+
+.flux-code code {
+        padding: 0;
+        background: transparent;
+        color: inherit;
+        font-size: inherit;
+}
+
+.flux-install .flux-note {
+        margin-top: 8px;
+        font-size: 0.78rem;
+        opacity: 0.75;
 }
 
 /* ------------------------------------------------------------------ *
@@ -3191,7 +3426,41 @@ button:active {
         }
 
         .project-card__actions a,
+        .project-card__actions button,
         .project-card__reaction {
                 min-height: 42px;
+        }
+}
+
+/* Four workspace buttons still have to fit next to the status-bar actions. */
+@media (max-width: 380px) {
+        .workspace-switcher {
+                gap: 2px;
+        }
+
+        .workspace-switcher__btn {
+                min-width: 32px;
+                padding: 2px 5px;
+        }
+}
+
+@media (max-width: 340px) {
+        .status-bar {
+                gap: 4px;
+                padding-inline: 4px;
+        }
+
+        .status-bar__btn {
+                width: 34px;
+                height: 34px;
+        }
+
+        .status-bar__clock {
+                min-width: 34px;
+                min-height: 34px;
+        }
+
+        .workspace-switcher__btn {
+                min-width: 30px;
         }
 }

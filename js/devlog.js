@@ -23,6 +23,22 @@
 	   repository — nothing here is invented. */
 	const ENTRIES = [
 		{
+			id: "v042-flux-workspace",
+			date: "2026-11-25",
+			title: "v0.4.2 — Flux workspace and release sync",
+			category: "Website",
+			kind: "minor",
+			description: "Flux gets its own workspace and a Projects card, status-bar button 4 now asks what to open, and the devlog starts syncing tagged GitHub releases on its own.",
+			changes: [
+				"Added Flux to the Projects explorer under Linux, with a Workspace shortcut on its card",
+				"New fourth workspace dedicated to Flux: overview, features, current package support and Nix install commands",
+				"Status-bar button 4 opens a small What to open? menu with the Flux overview; Ctrl+4 still switches directly and the URL mirrors it at /flux/",
+				"Devlog now pulls tagged GitHub releases automatically, falling back to compare commits when release notes are empty; curated entries take priority",
+				"Release data is cached for six hours, so the devlog keeps working when the GitHub API is rate-limited or offline",
+				"Help, the terminal workspace list and the status bar now cover four workspaces, with compact switcher buttons on narrow phones",
+			],
+		},
+		{
 			id: "v041-direct-webring",
 			date: "2026-11-18",
 			title: "v0.4.1 — direct webring neighbours",
